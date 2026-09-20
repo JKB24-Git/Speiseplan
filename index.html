@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Sicherheit: erlaubt nur Dateien von dieser Seite selbst (keine Fremd-Skripte, keine Tracker). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <title>Speiseplan</title>
+  <meta name="description" content="Speiseplan der aktuellen Woche mit Allergen-Angaben">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%BD%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#plan">Zum Speiseplan springen</a>
+
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <div class="masthead-text">
+        <h1>Speiseplan</h1>
+        <p id="week-label" class="week-label">Wird geladen …</p>
+        <p id="week-meta" class="week-meta"></p>
+      </div>
+      <nav class="week-nav" aria-label="Woche wählen">
+        <button id="prev" type="button" disabled>‹ Vorherige</button>
+        <label class="select-wrap">
+          <span class="sr">Woche wählen</span>
+          <select id="week-select" disabled></select>
+        </label>
+        <button id="next" type="button" disabled>Nächste ›</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p id="notice" class="notice" role="status" hidden></p>
+
+    <div class="panel">
+      <div class="grid-head" aria-hidden="true">
+        <span></span>
+        <span>Mittagessen</span>
+        <span>Abendessen</span>
+      </div>
+      <div id="plan" class="plan" tabindex="-1"></div>
+    </div>
+
+    <section class="legend" aria-labelledby="legend-title">
+      <h2 id="legend-title">Allergene</h2>
+      <ul id="legend"></ul>
+      <p class="legend-hint">Bei Allergien oder Unverträglichkeiten im Zweifel bitte beim Küchenteam nachfragen.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

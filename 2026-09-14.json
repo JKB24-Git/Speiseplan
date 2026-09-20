@@ -1,0 +1,75 @@
+{
+  "week": "14.09.2026 - 18.09.2026",
+  "days": [
+    {
+      "day": "Montag",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Griechischer Salat", "allergens": ["G"] },
+        { "name": "Schlutzkrapfen mit Parmesan und Olivenöl", "allergens": ["A", "C", "G"] },
+        { "name": "Schokoladenpudding", "allergens": ["A", "C", "F", "G", "H"] }
+      ],
+      "dinner": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Griechischer Salat", "allergens": ["G"] },
+        { "name": "Truthahn-Currygeschnetzeltes, Basmatireis, Bohnen", "allergens": ["A", "C", "G", "L", "F"] },
+        { "name": "Banane", "allergens": [] }
+      ]
+    },
+    {
+      "day": "Dienstag",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Tramezzinoschnitte", "allergens": ["A", "C", "D", "G", "M"] },
+        { "name": "Hühnerkeulen mit Wedgeskartoffeln und Peperonata", "allergens": ["F", "M", "N"] },
+        { "name": "Trauben", "allergens": [] }
+      ],
+      "dinner": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Tramezzinoschnitte", "allergens": ["A", "C", "D", "G", "M"] },
+        { "name": "Penne mit frischen Tomaten, Mozzarella und Pesto", "allergens": ["A", "C", "G", "L", "F"] },
+        { "name": "Tiramisù", "allergens": ["A", "C", "G"] }
+      ]
+    },
+    {
+      "day": "Mittwoch",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Gekochte Eier", "allergens": ["C"] },
+        { "name": "Lasagne Bolognese", "allergens": ["A", "C", "G", "L"] },
+        { "name": "Pfirsichkompott", "allergens": [] }
+      ],
+      "dinner": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Gekochte Eier", "allergens": ["C"] },
+        { "name": "Gnocchetti sardi mit Garnelen-Gemüsesauce", "allergens": ["A", "B", "C", "F", "G", "L", "N"] },
+        { "name": "Zitronenschnitte", "allergens": ["C", "A", "G", "L"] }
+      ]
+    },
+    {
+      "day": "Donnerstag",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Grillgemüse", "allergens": [] },
+        { "name": "Gebackenes Schollenfilet mit Salzkartoffel und Brokoli", "allergens": ["A", "D"] },
+        { "name": "Obstsalat", "allergens": [] }
+      ],
+      "dinner": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Grillgemüse", "allergens": [] },
+        { "name": "Hirtenmaccheroni", "allergens": ["A", "C", "G", "L", "F"] },
+        { "name": "Bayrische Creme", "allergens": ["A", "C", "G"] }
+      ]
+    },
+    {
+      "day": "Freitag",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Mozzarella-Sticks an Tomatensauce", "allergens": ["A", "C", "G"] },
+        { "name": "Pilzknödel mit Ratatouillegemüse", "allergens": ["A", "C", "G"] },
+        { "name": "Obst", "allergens": [] }
+      ],
+      "dinner": []
+    }
+  ]
+}
