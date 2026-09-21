@@ -12,7 +12,7 @@
 </head>
 <body>
   <a class="skip" href="#plan">Zum Speiseplan springen</a>
-
+ 
   <header class="masthead">
     <div class="wrap masthead-inner">
       <div class="masthead-text">
@@ -21,19 +21,19 @@
         <p id="week-meta" class="week-meta"></p>
       </div>
       <nav class="week-nav" aria-label="Woche wählen">
-        <button id="prev" type="button" disabled>‹ Vorherige</button>
+        <button id="prev" type="button" hidden>‹ Vorherige</button>
         <label class="select-wrap">
           <span class="sr">Woche wählen</span>
           <select id="week-select" disabled></select>
         </label>
-        <button id="next" type="button" disabled>Nächste ›</button>
+        <button id="next" type="button" hidden>Nächste ›</button>
       </nav>
     </div>
   </header>
-
+ 
   <main class="wrap">
     <p id="notice" class="notice" role="status" hidden></p>
-
+ 
     <div class="panel">
       <div class="grid-head" aria-hidden="true">
         <span></span>
@@ -42,14 +42,14 @@
       </div>
       <div id="plan" class="plan" tabindex="-1"></div>
     </div>
-
+ 
     <section class="legend" aria-labelledby="legend-title">
       <h2 id="legend-title">Allergene</h2>
       <ul id="legend"></ul>
-      <p class="legend-hint">Bei Allergien oder Unverträglichkeiten im Zweifel bitte beim Küchenteam nachfragen.</p>
     </section>
   </main>
-
+ 
   <script src="app.js"></script>
 </body>
 </html>
+ 
