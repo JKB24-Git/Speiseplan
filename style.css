@@ -1,47 +1,55 @@
-/* ---------- Farben und Schriften ---------- */
+/* ---------- Farben und Schriften (nur Schwarz, Weiß und Grautöne) ---------- */
 :root {
   color-scheme: light dark;
-
-  --bg: #edf1ea;
-  --surface: #fbfcfa;
-  --ink: #1c2b24;
-  --muted: #56665d;
-  --rule: #c9d3ca;
-  --brand: #1f4d3a;
-  --lemon: #f5cf3e;
-  --today-bg: #fff4c2;
-  --chip-bg: #e1eae2;
-  --chip-ink: #1f4d3a;
-  --mast-bg: #1f4d3a;
-  --mast-ink: #f4f8f2;
-  --control-bg: #f4f8f2;
-  --control-ink: #1c2b24;
-  --focus: #1f4d3a;
-
+ 
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --ink: #111111;
+  --muted: #565656;
+  --rule: #d2d2d2;
+  --strong: #111111;        /* kräftige Linien und Überschriften */
+  --accent: #111111;        /* "Heute"-Markierung */
+  --accent-ink: #ffffff;
+  --today-bg: #eeeeee;
+  --chip-bg: #e6e6e6;
+  --chip-ink: #111111;
+  --mast-bg: #111111;
+  --mast-ink: #ffffff;
+  --control-bg: #ffffff;
+  --control-ink: #111111;
+  --focus: #111111;
+ 
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --cols: 10rem minmax(0, 1fr) minmax(0, 1fr);
 }
-
+ 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0e1813;
-    --surface: #15221b;
-    --ink: #e6eee5;
-    --muted: #9baea1;
-    --rule: #2a3d32;
-    --brand: #8ccfa6;
-    --today-bg: #2b2a10;
-    --chip-bg: #22352a;
-    --chip-ink: #bfe5cd;
-    --mast-bg: #183628;
-    --focus: #f5cf3e;
+    --bg: #111111;
+    --surface: #111111;
+    --ink: #f2f2f2;
+    --muted: #a9a9a9;
+    --rule: #333333;
+    --strong: #f2f2f2;
+    --accent: #f2f2f2;
+    --accent-ink: #111111;
+    --today-bg: #222222;
+    --chip-bg: #2c2c2c;
+    --chip-ink: #f2f2f2;
+    --mast-bg: #000000;
+    --mast-ink: #ffffff;
+    --control-bg: #f2f2f2;
+    --control-ink: #111111;
+    --focus: #ffffff;
   }
 }
-
+ 
 /* ---------- Grundlagen ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-
+ 
+[hidden] { display: none !important; }
+ 
 body {
   margin: 0;
   background: var(--bg);
@@ -50,13 +58,13 @@ body {
   font-size: 1rem;
   line-height: 1.5;
 }
-
+ 
 .wrap {
   max-width: 68rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
-
+ 
 .sr {
   position: absolute;
   width: 1px;
@@ -68,30 +76,30 @@ body {
   white-space: nowrap;
   border: 0;
 }
-
+ 
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
-
+ 
 .skip {
   position: absolute;
   left: -999px;
   top: 0;
-  background: var(--lemon);
-  color: #1c2b24;
+  background: var(--accent);
+  color: var(--accent-ink);
   padding: 0.5rem 1rem;
   z-index: 10;
 }
 .skip:focus { left: 0; }
-
+ 
 /* ---------- Kopfbereich ---------- */
 .masthead {
   background: var(--mast-bg);
   color: var(--mast-ink);
   padding: 1.75rem 0 1.5rem;
 }
-
+ 
 .masthead-inner {
   display: flex;
   flex-wrap: wrap;
@@ -99,7 +107,7 @@ body {
   justify-content: space-between;
   gap: 1.25rem 2rem;
 }
-
+ 
 .masthead h1 {
   margin: 0;
   font-size: clamp(2.25rem, 7vw, 3.5rem);
@@ -107,29 +115,28 @@ body {
   line-height: 1;
   letter-spacing: -0.02em;
 }
-
+ 
 .week-label {
   margin: 0.6rem 0 0;
   font-size: clamp(1.15rem, 3.5vw, 1.5rem);
   font-weight: 600;
-  color: var(--lemon);
   font-variant-numeric: tabular-nums;
 }
-
+ 
 .week-meta {
   margin: 0.15rem 0 0;
   font-size: 0.95rem;
-  opacity: 0.85;
+  opacity: 0.75;
 }
 .week-meta:empty { display: none; }
-
+ 
 .week-nav {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: stretch;
 }
-
+ 
 .week-nav button,
 .week-nav select {
   font: inherit;
@@ -141,47 +148,46 @@ body {
   padding: 0.5rem 0.85rem;
   min-height: 2.5rem;
 }
-
+ 
 .week-nav button { cursor: pointer; font-weight: 600; }
-.week-nav button:hover:not(:disabled) { background: #ffffff; }
-.week-nav button:disabled { opacity: 0.45; cursor: default; }
+.week-nav button:hover { background: #d9d9d9; }
 .week-nav select { max-width: 100%; }
+.week-nav select:disabled { opacity: 0.6; }
 .select-wrap { display: flex; }
-
-.masthead :focus-visible { outline-color: var(--lemon); }
-
+ 
+.masthead :focus-visible { outline-color: var(--mast-ink); }
+ 
 /* ---------- Hinweise ---------- */
 .notice {
   margin: 1.25rem 0 0;
   padding: 0.75rem 1rem;
   background: var(--today-bg);
-  border-left: 6px solid var(--lemon);
+  border-left: 6px solid var(--accent);
   color: var(--ink);
 }
-.notice[hidden] { display: none; }
 .notice a { color: inherit; font-weight: 600; }
-
+ 
 /* ---------- Plan ---------- */
 .panel {
   margin: 1.25rem 0 0;
   background: var(--surface);
-  border-top: 3px solid var(--brand);
+  border-top: 3px solid var(--strong);
   border-bottom: 1px solid var(--rule);
 }
-
+ 
 .grid-head { display: none; }
-
+ 
 .day {
   padding: 1.25rem 1rem 1.25rem 1.25rem;
   border-top: 1px solid var(--rule);
 }
 .day:first-child { border-top: 0; }
-
+ 
 .day.is-today {
   background: var(--today-bg);
-  box-shadow: inset 6px 0 0 var(--lemon);
+  box-shadow: inset 6px 0 0 var(--accent);
 }
-
+ 
 .day-head {
   display: flex;
   align-items: baseline;
@@ -189,9 +195,9 @@ body {
   gap: 0.75rem;
   margin-bottom: 0.75rem;
 }
-
+ 
 .day-title { display: flex; flex-direction: column; }
-
+ 
 .day-name {
   margin: 0;
   font-size: 1.4rem;
@@ -199,54 +205,54 @@ body {
   line-height: 1.15;
   letter-spacing: -0.01em;
 }
-
+ 
 .day-date {
   color: var(--muted);
   font-size: 0.95rem;
   font-variant-numeric: tabular-nums;
 }
-
+ 
 .today-tag {
-  background: var(--lemon);
-  color: #1c2b24;
+  background: var(--accent);
+  color: var(--accent-ink);
   font-size: 0.85rem;
   font-weight: 700;
   padding: 0.1rem 0.55rem;
   border-radius: 4px;
 }
-
+ 
 .meal + .meal { margin-top: 1.25rem; }
-
+ 
 .meal-label {
   margin: 0 0 0.5rem;
   padding-bottom: 0.25rem;
-  border-bottom: 2px solid var(--brand);
+  border-bottom: 2px solid var(--strong);
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--brand);
+  color: var(--strong);
 }
-
+ 
 .dishes {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-
+ 
 .dishes li + li { margin-top: 0.7rem; }
-
+ 
 .dish {
   font-family: var(--serif);
   font-size: 1.08rem;
   line-height: 1.4;
 }
-
+ 
 .allergens {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
   margin-top: 0.3rem;
 }
-
+ 
 .al {
   display: inline-flex;
   align-items: center;
@@ -261,23 +267,23 @@ body {
   font-weight: 700;
   line-height: 1;
 }
-
+ 
 .al-unknown { outline: 2px dashed var(--muted); outline-offset: -2px; }
-
+ 
 .empty {
   margin: 0;
   color: var(--muted);
   font-style: italic;
 }
-
+ 
 /* ---------- Legende ---------- */
 .legend { margin: 2rem 0 0; padding-bottom: 3rem; }
-
+ 
 .legend h2 {
   margin: 0 0 0.75rem;
   font-size: 1.1rem;
 }
-
+ 
 .legend ul {
   list-style: none;
   margin: 0;
@@ -286,21 +292,14 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
   gap: 0.5rem 1.5rem;
 }
-
+ 
 .legend li {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   font-size: 0.95rem;
 }
-
-.legend-hint {
-  margin: 1rem 0 0;
-  color: var(--muted);
-  font-size: 0.95rem;
-  max-width: 40rem;
-}
-
+ 
 /* ---------- Schmale Bildschirme: Wochenwahl über die volle Breite ---------- */
 @media (max-width: 859px) {
   .week-nav { width: 100%; }
@@ -308,7 +307,7 @@ body {
   .week-nav select { width: 100%; }
   .week-nav button { flex: 1; }
 }
-
+ 
 /* ---------- Breite Bildschirme: Tabelle Tag x Mahlzeit ---------- */
 @media (min-width: 860px) {
   .grid-head,
@@ -317,25 +316,29 @@ body {
     grid-template-columns: var(--cols);
     column-gap: 2rem;
   }
-
+ 
   .grid-head {
     padding: 0.9rem 1rem 0.5rem 1.25rem;
     font-weight: 700;
-    color: var(--brand);
-    border-bottom: 2px solid var(--brand);
+    color: var(--strong);
+    border-bottom: 2px solid var(--strong);
   }
-
-  .day:first-child { border-top: 0; }
-
+ 
   .day-head {
     display: block;
     margin: 0;
+    grid-column: 1;
+    grid-row: 1;
   }
   .day-title { margin-bottom: 0.5rem; }
   .today-tag { display: inline-block; }
-
+ 
+  /* Feste Spalten: fehlt eine Mahlzeit, rutscht die andere nicht in die falsche Spalte */
+  .meal { margin-top: 0; grid-row: 1; }
+  .meal-lunch { grid-column: 2; }
+  .meal-dinner { grid-column: 3; }
   .meal + .meal { margin-top: 0; }
-
+ 
   /* Die Spaltenüberschriften stehen oben; pro Zeile nur für Screenreader */
   .meal-label {
     position: absolute;
@@ -349,15 +352,16 @@ body {
     border: 0;
   }
 }
-
+ 
 /* ---------- Druck ---------- */
 @media print {
   body { background: #fff; color: #000; }
   .masthead { background: none; color: #000; border-bottom: 2px solid #000; padding-bottom: 0.75rem; }
-  .week-label { color: #000; }
   .week-nav, .skip, .notice { display: none; }
   .panel { border-top-color: #000; }
   .day { break-inside: avoid; }
   .day.is-today { background: none; box-shadow: none; }
+  .today-tag { border: 1px solid #000; background: none; color: #000; }
   .legend { padding-bottom: 0; break-inside: avoid; }
 }
+ 
