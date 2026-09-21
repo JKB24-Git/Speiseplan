@@ -1,16 +1,16 @@
-{
-  "A": "Glutenhaltiges Getreide",
-  "B": "Krebstiere",
-  "C": "Eier",
-  "D": "Fisch",
-  "E": "Erdnüsse",
-  "F": "Soja",
-  "G": "Milch und Laktose",
-  "H": "Schalenfrüchte",
-  "L": "Sellerie",
-  "M": "Senf",
-  "N": "Sesam",
-  "O": "Sulfite",
-  "P": "Lupinen",
-  "R": "Weichtiere"
-}
+[
+  { "code": "A", "name": "Gluten",          "color": "#c8102e" },
+  { "code": "C", "name": "Eier",            "color": "#f08a00" },
+  { "code": "G", "name": "Milch",           "color": "#1f5fae" },
+  { "code": "L", "name": "Sellerie",        "color": "#46822a" },
+  { "code": "F", "name": "Soja",            "color": "#d9b300" },
+  { "code": "E", "name": "Erdnuss" },
+  { "code": "D", "name": "Fisch" },
+  { "code": "B", "name": "Krebstiere" },
+  { "code": "P", "name": "Lupine" },
+  { "code": "H", "name": "Schalenfrüchte" },
+  { "code": "O", "name": "Schwefeldioxid" },
+  { "code": "M", "name": "Senf" },
+  { "code": "N", "name": "Sesam" },
+  { "code": "R", "name": "Weichtiere" }
+]
