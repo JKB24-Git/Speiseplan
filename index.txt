@@ -1,4 +1,0 @@
-# Eine Datei pro Zeile. Der Dateiname ist das Datum des Montags der Woche.
-# Neue Woche: Datei in diesem Ordner anlegen und hier eine Zeile ergänzen.
-# Die Reihenfolge ist egal, die neueste Woche wird automatisch als aktuell gezeigt.
-2026-09-14.json
