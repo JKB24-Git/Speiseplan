@@ -1,0 +1,75 @@
+{
+  "week": "07.09.2026 - 11.09.2026",
+  "days": [
+    {
+      "day": "Montag",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Russischer Salat", "allergens": ["C", "F", "M"] },
+        { "name": "Vollkornnudel mit Schinken und Erbsen", "allergens": ["G", "L", "F"] },
+        { "name": "Aprikosenjogurt", "allergens": ["G"] }
+      ],
+      "dinner": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Russischer Salat", "allergens": ["C", "F", "M"] },
+        { "name": "Kalbsrahmgoulash mit Reis und Karotten", "allergens": ["L", "F"] },
+        { "name": "Nektarine", "allergens": [] }
+      ]
+    },
+    {
+      "day": "Dienstag",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Mozzarella und Tomaten", "allergens": ["G"] },
+        { "name": "Spinatknödel mit Parmesan und Butter", "allergens": ["C", "A", "G"] },
+        { "name": "Vanillepudding", "allergens": ["A", "C", "G", "H", "F"] }
+      ],
+      "dinner": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Mozzarella und Tomaten", "allergens": ["G"] },
+        { "name": "Kartoffelnocken mit Safransauce und Räucherlachs", "allergens": ["C", "D", "A", "G", "L", "F", "N"] },
+        { "name": "Ananaskompott", "allergens": [] }
+      ]
+    },
+    {
+      "day": "Mittwoch",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Reissalat", "allergens": ["D", "N", "F"] },
+        { "name": "Truthahnschnitzel vom Grill mit Tex-Mexkartoffel und Mischgemüse", "allergens": [] },
+        { "name": "Melone", "allergens": [] }
+      ],
+      "dinner": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Reissalat", "allergens": ["D", "N", "F"] },
+        { "name": "Tortellini Mamma Rosa Art", "allergens": ["C", "A", "G", "L", "F"] },
+        { "name": "Schokosahneschnitte", "allergens": ["C", "A", "G", "L"] }
+      ]
+    },
+    {
+      "day": "Donnerstag",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Piadinaschnitte", "allergens": ["A", "C", "G", "M", "N"] },
+        { "name": "Heilbuttfilet mit Salzkartoffel und Zucchini", "allergens": ["A", "D"] },
+        { "name": "Apfelstrudel", "allergens": ["A", "C", "G"] }
+      ],
+      "dinner": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Piadinaschnitte", "allergens": ["A", "C", "G", "M", "N"] },
+        { "name": "Farfalle mit Amatriciana Sauce", "allergens": ["A", "C", "L", "F"] },
+        { "name": "Panna cotta", "allergens": ["A", "C", "G"] }
+      ]
+    },
+    {
+      "day": "Freitag",
+      "lunch": [
+        { "name": "Salat vom Buffet", "allergens": [] },
+        { "name": "Frühlingsrolle", "allergens": ["C", "L", "F"] },
+        { "name": "Eier-Spätzle mit Pfifferlingsauce", "allergens": ["C", "A", "G", "L", "F"] },
+        { "name": "Obst", "allergens": [] }
+      ],
+      "dinner": []
+    }
+  ]
+}
