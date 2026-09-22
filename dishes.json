@@ -1,1 +1,9 @@
-{}
+  {
+    "Wiener Schnitzel mit Kartoffelsalat": {
+      "image": "48942-wiener-schnitzel-kartoffelsalat-rezept.webp",
+      "description": "wienerschnitzli"
+    },
+    "Römische Griesnocken Tomatensauce": {
+      "description": "TEST."
+    }
+  }
