@@ -12,6 +12,10 @@
   --accent: #111111;        /* Markierung für "Heute" */
   --accent-ink: #ffffff;
   --today-bg: #ebebeb;
+  --today-block-bg: #111111;   /* Block hinter dem heutigen Tagesnamen */
+  --today-block-ink: #ffffff;
+  --today-tag-bg: #ffffff;
+  --today-tag-ink: #111111;
   --chip-bg: #e6e6e6;       /* Allergene ohne eigene Farbe */
   --chip-ink: #111111;
   --chip-line: #b5b5b5;
@@ -42,6 +46,10 @@
     --accent: #f2f2f2;
     --accent-ink: #111111;
     --today-bg: #262626;
+    --today-block-bg: #4a4a4a;   /* mittleres Grau statt Weiß: deutlich sichtbar, aber nicht grell */
+    --today-block-ink: #ffffff;
+    --today-tag-bg: #1a1a1a;
+    --today-tag-ink: #ffffff;
     --chip-bg: #2c2c2c;
     --chip-ink: #f2f2f2;
     --chip-line: #5c5c5c;
@@ -195,14 +203,18 @@ body {
   background: var(--surface);
   border-top: 3px solid var(--strong);
   border-bottom: 2px solid var(--divider);
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
+
+/* Kurzes Überblenden beim Wechsel der Woche (siehe app.js: renderWeekAnimated) */
+.panel.is-changing { opacity: 0; transform: translateY(6px); }
 
 .grid-head { display: none; }
 
 .day {
-  padding: 1.25rem 1rem 1.25rem 1.25rem;
+  padding: 2rem 1rem 2rem 1.25rem;
   border-top: 2px solid var(--divider);
-  scroll-margin: 1rem;
+  scroll-margin: 4rem 0 1rem;   /* oben Platz für die feste Leiste */
 }
 .day:first-child { border-top: 0; }
 
@@ -244,25 +256,30 @@ body {
 }
 
 .day.is-today .day-head {
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--today-block-bg);
+  color: var(--today-block-ink);
   padding: 0.65rem 0.75rem;
   border-radius: 4px;
 }
 .day.is-today .day-date { color: inherit; opacity: 0.8; }
-.day.is-today .today-tag { background: var(--accent-ink); color: var(--accent); }
+.day.is-today .today-tag { background: var(--today-tag-bg); color: var(--today-tag-ink); }
 
-.meal { container-type: inline-size; }
+
 .meal + .meal { margin-top: 1.25rem; }
 
 .meal-label {
-  margin: 0 0 0.5rem;
-  padding-bottom: 0.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  margin: 0 -1rem 0.5rem -1.25rem;          /* über die volle Breite, wie eine Leiste */
+  padding: 0.55rem 1rem 0.3rem 1.25rem;
+  background: var(--surface);
   border-bottom: 2px solid var(--strong);
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--strong);
 }
+.day.is-today .meal-label { background: var(--today-bg); }
 
 .dishes {
   list-style: none;
@@ -277,6 +294,28 @@ body {
   font-size: 1.08rem;
   line-height: 1.4;
 }
+
+/* Hauptgericht mit Foto/Beschreibung: klickbar, mit kleinem Kamera-Symbol */
+button.dish-detail {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--muted);
+  text-underline-offset: 3px;
+}
+button.dish-detail:hover,
+button.dish-detail:focus-visible { text-decoration-color: currentColor; }
+button.dish-detail .dish-icon { flex: none; opacity: 0.7; align-self: center; }
 
 .allergens {
   display: flex;
@@ -304,21 +343,6 @@ body {
 .day.is-today .al:not([style]) { background: var(--surface); }
 
 .al-unknown { outline: 2px dashed var(--muted); outline-offset: -2px; }
-
-/* Genug Platz in der Spalte: Allergene stehen rechts neben dem Gericht, sonst darunter */
-@container (min-width: 24rem) {
-  .dishes li {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: 0.75rem;
-    align-items: start;
-  }
-  .allergens {
-    margin-top: 0.1rem;
-    justify-content: flex-end;
-    max-width: 12.5rem;
-  }
-}
 
 .empty {
   margin: 0;
@@ -368,6 +392,10 @@ body {
   }
 
   .grid-head {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--surface);
     padding: 0.9rem 1rem 0.5rem 1.25rem;
     font-weight: 700;
     color: var(--strong);
@@ -404,11 +432,119 @@ body {
   }
 }
 
+/* ---------- Foto-Vorschau beim Überfahren mit der Maus (nur PC) ---------- */
+.hover-preview {
+  position: absolute;
+  z-index: 40;
+  width: 10.5rem;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(0, calc(-100% - 10px));
+  transition: opacity 0.15s ease;
+}
+.hover-preview.is-visible { opacity: 1; }
+.hover-preview img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--chip-bg);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+}
+
+/* ---------- Foto und Beschreibung: Dialog beim Anklicken ---------- */
+body.detail-open { overflow: hidden; }
+
+.detail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.detail-overlay.is-visible { opacity: 1; }
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .detail-overlay {
+    background: rgba(0, 0, 0, 0.35);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+}
+
+.detail-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 32rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  padding: 1.25rem 1.25rem 1.5rem;
+  transform: translateY(12px) scale(0.98);
+  opacity: 0;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.detail-overlay.is-visible .detail-dialog { opacity: 1; transform: translateY(0) scale(1); }
+
+.detail-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.detail-close:hover { background: var(--divider); }
+
+.detail-title { margin: 0 2.3rem 0.75rem 0; font-size: 1.3rem; font-weight: 800; }
+
+/* Bild schwebt an der Seite, der Text läuft links daneben (funktioniert auf PC und Handy gleich) */
+.detail-content { display: flow-root; }
+.detail-media { float: right; width: 42%; max-width: 12rem; margin: 0 0 0.75rem 1rem; }
+.detail-media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--chip-bg);
+}
+
+.detail-description { margin: 0 0 0.75rem; line-height: 1.55; }
+.detail-allergens .allergens { margin-top: 0.25rem; }
+
+/* ---------- Bewegung reduzieren: Anwender-Einstellung respektieren ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .detail-overlay,
+  .detail-dialog,
+  .hover-preview {
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ---------- Druck ---------- */
 @media print {
   body { background: #fff; color: #000; }
   .masthead { background: none; color: #000; border-bottom: 2px solid #000; padding-bottom: 0.75rem; }
-  .week-nav, .skip, .notice { display: none; }
+  .week-nav, .skip, .notice, .detail-overlay, .hover-preview { display: none; }
   .panel { border-top-color: #000; }
   .day { break-inside: avoid; }
   .day.is-today { background: none; }
