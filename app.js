@@ -20,7 +20,9 @@
     calendarWeek: "Kalenderwoche",
     weekOption: "KW {kw} (ab {date})",
     unknownAllergen: "Unbekannter Code",
-    allergensPrefix: "Allergene: "
+    allergensPrefix: "Allergene: ",
+    detailHint: "Foto und Beschreibung ansehen",
+    detailClose: "Schließen"
   };
 
   var MEALS = [
@@ -42,6 +44,14 @@
     // Immer textContent, nie innerHTML: Inhalte aus den Dateien können so keinen Code einschleusen.
     if (text !== undefined) node.textContent = text;
     return node;
+  }
+
+  function reduceMotion() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
+  function canHover() {
+    return !!(window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches);
   }
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
@@ -115,6 +125,31 @@
     return whiteContrast >= blackContrast ? "#ffffff" : "#111111";
   }
 
+  /* ---------- Kleines Kamera-Symbol (zeigt Foto+Beschreibung an) ---------- */
+  function dishIcon() {
+    var NS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 20 20");
+    svg.setAttribute("width", "14");
+    svg.setAttribute("height", "14");
+    svg.classList.add("dish-icon");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("focusable", "false");
+    var body = document.createElementNS(NS, "rect");
+    body.setAttribute("x", "2"); body.setAttribute("y", "5.4");
+    body.setAttribute("width", "16"); body.setAttribute("height", "11.6");
+    body.setAttribute("rx", "2");
+    body.setAttribute("fill", "none"); body.setAttribute("stroke", "currentColor"); body.setAttribute("stroke-width", "1.5");
+    var bump = document.createElementNS(NS, "rect");
+    bump.setAttribute("x", "7"); bump.setAttribute("y", "3"); bump.setAttribute("width", "6"); bump.setAttribute("height", "2.4");
+    bump.setAttribute("rx", "1"); bump.setAttribute("fill", "currentColor");
+    var lens = document.createElementNS(NS, "circle");
+    lens.setAttribute("cx", "10"); lens.setAttribute("cy", "11.4"); lens.setAttribute("r", "3.1");
+    lens.setAttribute("fill", "none"); lens.setAttribute("stroke", "currentColor"); lens.setAttribute("stroke-width", "1.5");
+    svg.appendChild(body); svg.appendChild(bump); svg.appendChild(lens);
+    return svg;
+  }
+
   /* ------------------------------------------------------------
      Zustand
      ------------------------------------------------------------ */
@@ -122,8 +157,9 @@
     files: [],        // alle Wochen-Dateien, neueste zuerst
     allergens: [],    // Liste in der Reihenfolge von allergens.json
     allergenByCode: {},
-    request: 0,       // schützt vor Durcheinander bei schnellem Klicken
-    firstView: true   // nur beim ersten Öffnen zum heutigen Tag scrollen
+    dishes: {},        // Name (getrimmt) -> { image, description } aus dishes.json
+    request: 0,        // schützt vor Durcheinander bei schnellem Klicken
+    firstView: true    // nur beim ersten Aufbau nicht animieren / zum heutigen Tag scrollen
   };
 
   var ui = {
@@ -134,7 +170,8 @@
     select: $("week-select"),
     prev: $("prev"),
     next: $("next"),
-    legend: $("legend")
+    legend: $("legend"),
+    panel: document.querySelector(".panel")
   };
 
   function setAllergens(data) {
@@ -154,6 +191,22 @@
     state.allergens = list;
     state.allergenByCode = {};
     list.forEach(function (a, i) { a.order = i; state.allergenByCode[a.code] = a; });
+  }
+
+  // dishes.json: { "Genauer Gerichtename": { "image": "images/….jpg", "description": "…" }, … }
+  function setDishes(data) {
+    var map = {};
+    if (data && typeof data === "object" && !Array.isArray(data)) {
+      Object.keys(data).forEach(function (name) {
+        var entry = data[name];
+        if (!entry || typeof entry !== "object") return;
+        var image = typeof entry.image === "string" && entry.image.trim() ? entry.image.trim() : null;
+        var description = typeof entry.description === "string" && entry.description.trim() ? entry.description.trim() : null;
+        var key = name.trim();
+        if (key && (image || description)) map[key] = { image: image, description: description };
+      });
+    }
+    state.dishes = map;
   }
 
   /* ------------------------------------------------------------
@@ -217,17 +270,198 @@
     return wrap;
   }
 
+  /* ---------- Foto/Beschreibung: Vorschau beim Überfahren mit der Maus ---------- */
+  var hoverBox = null;
+  var hoverTimer = null;
+
+  function ensureHoverBox() {
+    if (hoverBox) return hoverBox;
+    hoverBox = el("div", "hover-preview");
+    hoverBox.appendChild(el("img"));
+    hoverBox.hidden = true;
+    document.body.appendChild(hoverBox);
+    return hoverBox;
+  }
+
+  function positionHoverBox(trigger) {
+    var box = ensureHoverBox();
+    var r = trigger.getBoundingClientRect();
+    var left = r.left + window.scrollX;
+    var maxLeft = window.scrollX + document.documentElement.clientWidth - 176;   // Vorschau bleibt im Bild
+    if (left > maxLeft) left = Math.max(window.scrollX + 8, maxLeft);
+    box.style.left = left + "px";
+    box.style.top = (r.top + window.scrollY) + "px";
+  }
+
+  function showHoverBox(trigger, src) {
+    var box = ensureHoverBox();
+    box.querySelector("img").src = src;
+    positionHoverBox(trigger);
+    box.hidden = false;
+    void box.offsetWidth;   // Reflow erzwingen, damit die folgende Klasse den Übergang auslöst
+    box.classList.add("is-visible");
+  }
+
+  function hideHoverBox() {
+    if (!hoverBox) return;
+    hoverBox.classList.remove("is-visible");
+  }
+
+  function attachHoverPreview(trigger, image) {
+    if (!image || !canHover()) return;   // nur auf Geräten mit Maus, und nur wenn ein Foto vorhanden ist
+    trigger.addEventListener("mouseenter", function () {
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(function () { showHoverBox(trigger, image); }, 120);
+    });
+    trigger.addEventListener("mouseleave", function () {
+      clearTimeout(hoverTimer);
+      hideHoverBox();
+    });
+    trigger.addEventListener("blur", hideHoverBox);
+  }
+
+  /* ---------- Foto/Beschreibung: Dialog beim Anklicken ---------- */
+  var detail = null;
+  var detailTrigger = null;
+
+  function ensureDetail() {
+    if (detail) return detail;
+
+    var overlay = el("div", "detail-overlay");
+    overlay.hidden = true;
+
+    var dialog = el("div", "detail-dialog");
+    dialog.setAttribute("role", "dialog");
+    dialog.setAttribute("aria-modal", "true");
+    dialog.setAttribute("aria-labelledby", "detail-title");
+    dialog.tabIndex = -1;
+
+    var closeBtn = el("button", "detail-close", "✕");
+    closeBtn.type = "button";
+    closeBtn.setAttribute("aria-label", TEXT.detailClose);
+    closeBtn.addEventListener("click", closeDetail);
+
+    var title = el("h3", "detail-title");
+    title.id = "detail-title";
+
+    var content = el("div", "detail-content");
+    var media = el("div", "detail-media");
+    var img = el("img");
+    img.loading = "lazy";
+    media.appendChild(img);
+
+    var body = el("div", "detail-body");
+    var desc = el("p", "detail-description");
+    var allergenWrap = el("div", "detail-allergens");
+
+    body.appendChild(desc);
+    body.appendChild(allergenWrap);
+    content.appendChild(media);
+    content.appendChild(body);
+
+    dialog.appendChild(closeBtn);
+    dialog.appendChild(title);
+    dialog.appendChild(content);
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) closeDetail(); });
+
+    detail = { overlay: overlay, dialog: dialog, closeBtn: closeBtn, title: title, media: media, img: img, desc: desc, allergenWrap: allergenWrap, closeTimer: null };
+    return detail;
+  }
+
+  function onDetailKeydown(e) {
+    if (e.key === "Escape") { closeDetail(); return; }
+    if (e.key === "Tab") {
+      // Im Dialog gibt es nur den Schließen-Button als Ziel: Fokus dort festhalten.
+      e.preventDefault();
+      detail.closeBtn.focus();
+    }
+  }
+
+  function openDetail(name, info, allergens, triggerEl) {
+    hideHoverBox();
+    var d = ensureDetail();
+    clearTimeout(d.closeTimer);
+
+    d.title.textContent = name;
+
+    if (info.image) {
+      d.img.onerror = function () { d.media.hidden = true; };
+      d.img.src = info.image;
+      d.img.alt = "";
+      d.media.hidden = false;
+    } else {
+      d.media.hidden = true;
+    }
+
+    d.desc.textContent = info.description || "";
+    d.desc.hidden = !info.description;
+
+    d.allergenWrap.textContent = "";
+    if (allergens && allergens.length) {
+      d.allergenWrap.appendChild(allergenChips(allergens));
+      d.allergenWrap.hidden = false;
+    } else {
+      d.allergenWrap.hidden = true;
+    }
+
+    detailTrigger = triggerEl || null;
+    document.body.classList.add("detail-open");
+    d.overlay.hidden = false;
+    void d.overlay.offsetWidth;   // Reflow erzwingen, damit die Klasse unten einen Übergang auslöst statt sofort umzuspringen
+    d.overlay.classList.add("is-visible");
+    document.addEventListener("keydown", onDetailKeydown);
+    d.dialog.focus();
+  }
+
+  function closeDetail() {
+    var d = detail;
+    if (!d || d.overlay.hidden) return;
+    d.overlay.classList.remove("is-visible");
+    document.body.classList.remove("detail-open");
+    document.removeEventListener("keydown", onDetailKeydown);
+    var wait = reduceMotion() ? 0 : 220;
+    d.closeTimer = setTimeout(function () { d.overlay.hidden = true; }, wait);
+    if (detailTrigger) { detailTrigger.focus(); detailTrigger = null; }
+  }
+
+  /* ---------- Ein Gericht (mit oder ohne Foto/Beschreibung) ---------- */
+  function renderDish(item, isMain) {
+    var name = item.name;
+    var info = isMain ? state.dishes[name.trim()] : null;
+
+    if (!info) return el("div", "dish", name);
+
+    var trigger = el("button", "dish dish-detail");
+    trigger.type = "button";
+    trigger.appendChild(document.createTextNode(name));
+    trigger.appendChild(dishIcon());
+    trigger.setAttribute("aria-haspopup", "dialog");
+    trigger.title = TEXT.detailHint;
+
+    var allergens = Array.isArray(item.allergens) ? item.allergens : [];
+    trigger.addEventListener("click", function () { openDetail(name, info, allergens, trigger); });
+    attachHoverPreview(trigger, info.image);
+
+    return trigger;
+  }
+
   function renderMeal(day, meal) {
     var items = Array.isArray(day[meal.key]) ? day[meal.key] : [];
     if (!items.length) return null;   // leere Mahlzeit (z. B. Freitagabend): gar nichts anzeigen
 
+    // Das Hauptgericht ist immer das vorletzte Gericht der Mahlzeit (danach kommt nur noch der Nachtisch/Obst).
+    var mainIndex = items.length >= 2 ? items.length - 2 : -1;
+
     var cell = el("div", "meal meal-" + meal.key);
     cell.appendChild(el("h3", "meal-label", meal.label));
     var list = el("ul", "dishes");
-    items.forEach(function (item) {
+    items.forEach(function (item, idx) {
       if (!item || typeof item.name !== "string") return;
       var li = el("li");
-      li.appendChild(el("div", "dish", item.name));
+      li.appendChild(renderDish(item, idx === mainIndex));
       if (Array.isArray(item.allergens) && item.allergens.length) {
         li.appendChild(allergenChips(item.allergens));
       }
@@ -283,6 +517,17 @@
     });
   }
 
+  // Kurzes Überblenden beim Wechsel der Woche. Wird beim allerersten Aufbau
+  // und bei "Bewegung reduzieren" übersprungen.
+  function renderWeekAnimated(file, data, animate) {
+    if (!animate || !ui.panel || reduceMotion()) { renderWeek(file, data); return; }
+    ui.panel.classList.add("is-changing");
+    setTimeout(function () {
+      renderWeek(file, data);
+      requestAnimationFrame(function () { ui.panel.classList.remove("is-changing"); });
+    }, 160);
+  }
+
   function renderControls(currentFile) {
     var i = state.files.indexOf(currentFile);
     var several = state.files.length > 1;
@@ -332,6 +577,7 @@
      ------------------------------------------------------------ */
   function route() {
     if (!state.files.length) return;
+    closeDetail();
 
     var newest = state.files[0];
     var raw = location.hash.replace(/^#/, "");
@@ -340,13 +586,14 @@
     var file = state.files.indexOf(wanted) >= 0 ? wanted : newest;
     var unknown = location.hash.length > 1 && file !== wanted;
     var id = ++state.request;
+    var animate = !state.firstView;
 
     renderControls(file);
     showNotice("");
 
     fetchJSON("weeks/" + file).then(function (data) {
       if (id !== state.request) return;
-      renderWeek(file, data);
+      renderWeekAnimated(file, data, animate);
 
       var monday = mondayOf(dateFromFile(file));
       var weekIsOver = new Date() > addDays(monday, 7);   // ab Montag der Folgewoche
@@ -381,17 +628,24 @@
   ui.next.addEventListener("click", function () { go(ui.next.dataset.target); });
   ui.select.addEventListener("change", function () { go(ui.select.value); });
   window.addEventListener("hashchange", route);
+  window.addEventListener("scroll", hideHoverBox, { passive: true });
+  window.addEventListener("resize", hideHoverBox);
 
   /* ------------------------------------------------------------
      Start
      ------------------------------------------------------------ */
   showMessage(TEXT.loading);
 
-  // Legende ist optional: fehlt die Datei, funktioniert der Rest trotzdem.
+  // Legende, Allergenfarben und Gericht-Fotos sind optional: fehlen die Dateien,
+  // funktioniert der Rest der Seite trotzdem.
   var legendReady = fetchJSON("allergens.json").then(function (data) {
     setAllergens(data);
     renderLegend();
   }).catch(function () { /* ohne Legende weitermachen */ });
+
+  var dishesReady = fetchJSON("dishes.json").then(function (data) {
+    setDishes(data);
+  }).catch(function () { /* ohne Fotos/Beschreibungen weitermachen */ });
 
   fetchText("weeks/index.txt").then(function (text) {
     var seen = {};
@@ -410,7 +664,7 @@
       showMessage(TEXT.noWeeks);
       return;
     }
-    return legendReady.then(route);
+    return Promise.all([legendReady, dishesReady]).then(route);
   }).catch(function (err) {
     if (window.console) console.error(err);
     ui.label.textContent = "";
