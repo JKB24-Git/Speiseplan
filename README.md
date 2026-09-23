@@ -1,11 +1,7 @@
-# Bilder für Hauptgerichte
+# Speiseplan
 
-Lege hier die Fotos ab, die in `dishes.json` verwendet werden.
+Der wöchentliche Speiseplan als Website – Mittag- und Abendessen mit Allergen-Angaben, immer für die aktuelle Woche, ältere Wochen bleiben im Archiv abrufbar.
 
-- Format: JPG oder PNG
-- Empfohlen: ca. 800×600 Pixel (4:3), Dateigröße unter 300 KB
-- Dateiname frei wählbar, z. B. `lasagne-bolognese.jpg`
+Diese Seite wurde mit Unterstützung von KI (Claude von Anthropic) erstellt.
 
-Ein Bild allein zeigt noch nichts an. Trage es zusätzlich in `dishes.json`
-ein (siehe README im Hauptordner), zusammen mit dem genauen Namen des
-Gerichts, wie er in den Wochen-Dateien steht.
+Wer die Inhalte pflegt, findet die technischen Schritte in [ANLEITUNG.md](ANLEITUNG.md).

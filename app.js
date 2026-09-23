@@ -30,6 +30,30 @@
     { key: "dinner", label: "Abendessen" }
   ];
 
+  // Essenszeiten: bestimmen, welche Mahlzeit heute als "als Nächstes" markiert wird,
+  // und werden neben "Mittagessen"/"Abendessen" angezeigt.
+  // ANPASSEN: die Mittagszeit ist ein Platzhalter, bitte auf die echte Zeit ändern.
+  var MEAL_TIMES = {
+    lunch: { start: "11:30", end: "13:00" },
+    dinner: { start: "18:00", end: "18:30" }
+  };
+
+  function parseHM(hm) {
+    var p = hm.split(":");
+    return Number(p[0]) * 60 + Number(p[1]);
+  }
+
+  function formatRange(t) { return t.start + "–" + t.end; }
+
+  // Welche Mahlzeit ist heute als Nächstes dran (nach den Zeiten oben)? null = beide vorbei.
+  function nextMealKey() {
+    var now = new Date();
+    var mins = now.getHours() * 60 + now.getMinutes();
+    if (mins < parseHM(MEAL_TIMES.lunch.end)) return "lunch";
+    if (mins < parseHM(MEAL_TIMES.dinner.end)) return "dinner";
+    return null;
+  }
+
   var DAY_NAMES = ["montag", "dienstag", "mittwoch", "donnerstag", "freitag", "samstag", "sonntag"];
   var FILE_RE = /^\d{4}-\d{2}-\d{2}\.json$/;
 
@@ -123,31 +147,6 @@
     var whiteContrast = 1.05 / (L + 0.05);
     var blackContrast = (L + 0.05) / 0.05;
     return whiteContrast >= blackContrast ? "#ffffff" : "#111111";
-  }
-
-  /* ---------- Kleines Kamera-Symbol (zeigt Foto+Beschreibung an) ---------- */
-  function dishIcon() {
-    var NS = "http://www.w3.org/2000/svg";
-    var svg = document.createElementNS(NS, "svg");
-    svg.setAttribute("viewBox", "0 0 20 20");
-    svg.setAttribute("width", "14");
-    svg.setAttribute("height", "14");
-    svg.classList.add("dish-icon");
-    svg.setAttribute("aria-hidden", "true");
-    svg.setAttribute("focusable", "false");
-    var body = document.createElementNS(NS, "rect");
-    body.setAttribute("x", "2"); body.setAttribute("y", "5.4");
-    body.setAttribute("width", "16"); body.setAttribute("height", "11.6");
-    body.setAttribute("rx", "2");
-    body.setAttribute("fill", "none"); body.setAttribute("stroke", "currentColor"); body.setAttribute("stroke-width", "1.5");
-    var bump = document.createElementNS(NS, "rect");
-    bump.setAttribute("x", "7"); bump.setAttribute("y", "3"); bump.setAttribute("width", "6"); bump.setAttribute("height", "2.4");
-    bump.setAttribute("rx", "1"); bump.setAttribute("fill", "currentColor");
-    var lens = document.createElementNS(NS, "circle");
-    lens.setAttribute("cx", "10"); lens.setAttribute("cy", "11.4"); lens.setAttribute("r", "3.1");
-    lens.setAttribute("fill", "none"); lens.setAttribute("stroke", "currentColor"); lens.setAttribute("stroke-width", "1.5");
-    svg.appendChild(body); svg.appendChild(bump); svg.appendChild(lens);
-    return svg;
   }
 
   /* ------------------------------------------------------------
@@ -354,8 +353,8 @@
     var desc = el("p", "detail-description");
     var allergenWrap = el("div", "detail-allergens");
 
-    body.appendChild(desc);
     body.appendChild(allergenWrap);
+    body.appendChild(desc);
     content.appendChild(media);
     content.appendChild(body);
 
@@ -431,13 +430,12 @@
   function renderDish(item, isMain) {
     var name = item.name;
     var info = isMain ? state.dishes[name.trim()] : null;
+    var cls = "dish" + (isMain ? " dish-main" : "");
 
-    if (!info) return el("div", "dish", name);
+    if (!info) return el("div", cls, name);
 
-    var trigger = el("button", "dish dish-detail");
+    var trigger = el("button", cls + " dish-detail", name);
     trigger.type = "button";
-    trigger.appendChild(document.createTextNode(name));
-    trigger.appendChild(dishIcon());
     trigger.setAttribute("aria-haspopup", "dialog");
     trigger.title = TEXT.detailHint;
 
@@ -448,14 +446,14 @@
     return trigger;
   }
 
-  function renderMeal(day, meal) {
+  function renderMeal(day, meal, isNext) {
     var items = Array.isArray(day[meal.key]) ? day[meal.key] : [];
     if (!items.length) return null;   // leere Mahlzeit (z. B. Freitagabend): gar nichts anzeigen
 
     // Das Hauptgericht ist immer das vorletzte Gericht der Mahlzeit (danach kommt nur noch der Nachtisch/Obst).
     var mainIndex = items.length >= 2 ? items.length - 2 : -1;
 
-    var cell = el("div", "meal meal-" + meal.key);
+    var cell = el("div", "meal meal-" + meal.key + (isNext ? " is-next" : ""));
     cell.appendChild(el("h3", "meal-label", meal.label));
     var list = el("ul", "dishes");
     items.forEach(function (item, idx) {
@@ -488,8 +486,9 @@
     if (isToday) head.appendChild(el("span", "today-tag", TEXT.today));
     section.appendChild(head);
 
+    var next = isToday ? nextMealKey() : null;
     MEALS.forEach(function (meal) {
-      var cell = renderMeal(day, meal);
+      var cell = renderMeal(day, meal, meal.key === next);
       if (cell) section.appendChild(cell);
     });
     return section;
@@ -635,6 +634,13 @@
      Start
      ------------------------------------------------------------ */
   showMessage(TEXT.loading);
+
+  // Uhrzeiten neben "Mittagessen"/"Abendessen" (oben in der Leiste, auf allen Bildschirmgrößen).
+  (function initMealTimeLabels() {
+    var lunchEl = $("gh-lunch"), dinnerEl = $("gh-dinner");
+    if (lunchEl) { lunchEl.appendChild(document.createTextNode(" ")); lunchEl.appendChild(el("span", "meal-time", formatRange(MEAL_TIMES.lunch))); }
+    if (dinnerEl) { dinnerEl.appendChild(document.createTextNode(" ")); dinnerEl.appendChild(el("span", "meal-time", formatRange(MEAL_TIMES.dinner))); }
+  })();
 
   // Legende, Allergenfarben und Gericht-Fotos sind optional: fehlen die Dateien,
   // funktioniert der Rest der Seite trotzdem.

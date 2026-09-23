@@ -21,8 +21,9 @@
   --chip-line: #b5b5b5;
   --mast-bg: #111111;
   --mast-ink: #ffffff;
-  --control-bg: #ffffff;
-  --control-ink: #111111;
+  --control-bg: #4a4a4a;    /* gleiches Grau wie die "Heute"-Markierung */
+  --control-ink: #ffffff;
+  --control-hover-bg: #5c5c5c;
   --focus: #111111;
 
   --notice-bg: #ffe45c;     /* gelbe Hinweise */
@@ -31,7 +32,9 @@
 
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --cols: 10.5rem minmax(0, 1fr) minmax(0, 1fr);
+  --cols: clamp(5.5rem, 24vw, 10.5rem) minmax(0, 1fr) minmax(0, 1fr);
+  --col-gap: clamp(0.75rem, 4vw, 2rem);
+  --pad-x: clamp(0.75rem, 4vw, 1.25rem);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -55,8 +58,6 @@
     --chip-line: #5c5c5c;
     --mast-bg: #000000;
     --mast-ink: #ffffff;
-    --control-bg: #f2f2f2;
-    --control-ink: #111111;
     --focus: #ffffff;
   }
 }
@@ -166,7 +167,7 @@ body {
 }
 
 .week-nav button { cursor: pointer; font-weight: 600; }
-.week-nav button:hover { background: #d9d9d9; }
+.week-nav button:hover { background: var(--control-hover-bg); }
 
 /* Am ersten/letzten Plan: Button unsichtbar, aber der Platz bleibt, damit das Dropdown nicht verrutscht */
 .week-nav button.is-off { visibility: hidden; }
@@ -209,10 +210,36 @@ body {
 /* Kurzes Überblenden beim Wechsel der Woche (siehe app.js: renderWeekAnimated) */
 .panel.is-changing { opacity: 0; transform: translateY(6px); }
 
-.grid-head { display: none; }
+.grid-head,
+.day {
+  display: grid;
+  grid-template-columns: var(--cols);
+  column-gap: var(--col-gap);
+}
+
+.grid-head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--surface);
+  padding: 0.9rem var(--pad-x) 0.5rem;
+  font-size: clamp(0.85rem, 3.5vw, 1rem);
+  font-weight: 700;
+  color: var(--strong);
+  border-bottom: 2px solid var(--strong);
+  overflow-wrap: anywhere;   /* Sicherheitsnetz, falls trotzdem einmal zu wenig Platz ist */
+}
+
+.meal-time {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.85em;
+}
 
 .day {
-  padding: 2rem 1rem 2rem 1.25rem;
+  padding: 2rem var(--pad-x);
   border-top: 2px solid var(--divider);
   scroll-margin: 4rem 0 1rem;   /* oben Platz für die feste Leiste */
 }
@@ -222,18 +249,18 @@ body {
 .day.is-today { background: var(--today-bg); }
 
 .day-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  display: block;
+  margin: 0;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;   /* nicht auf die volle Zeilenhöhe strecken (sonst viel Leerraum in der Box) */
 }
 
-.day-title { display: flex; flex-direction: column; }
+.day-title { display: flex; flex-direction: column; margin-bottom: 0.5rem; }
 
 .day-name {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: clamp(1rem, 4.5vw, 1.3rem);
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -247,6 +274,7 @@ body {
 }
 
 .today-tag {
+  display: inline-block;
   background: var(--accent);
   color: var(--accent-ink);
   font-size: 0.85rem;
@@ -264,22 +292,26 @@ body {
 .day.is-today .day-date { color: inherit; opacity: 0.8; }
 .day.is-today .today-tag { background: var(--today-tag-bg); color: var(--today-tag-ink); }
 
+/* Feste Spalten: fehlt eine Mahlzeit, rutscht die andere nicht in die falsche Spalte */
+.meal { grid-row: 1; }
+.meal-lunch { grid-column: 2; }
+.meal-dinner { grid-column: 3; }
 
-.meal + .meal { margin-top: 1.25rem; }
+/* Als Nächstes dran (nur beim heutigen Tag, nach den Essenszeiten in app.js) */
+.meal.is-next { box-shadow: inset 4px 0 0 0 var(--strong); padding-left: 0.6rem; }
 
+/* Spaltenüberschriften stehen oben in der Leiste; diese hier ist nur für Screenreader */
 .meal-label {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  margin: 0 -1rem 0.5rem -1.25rem;          /* über die volle Breite, wie eine Leiste */
-  padding: 0.55rem 1rem 0.3rem 1.25rem;
-  background: var(--surface);
-  border-bottom: 2px solid var(--strong);
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--strong);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
-.day.is-today .meal-label { background: var(--today-bg); }
 
 .dishes {
   list-style: none;
@@ -293,14 +325,19 @@ body {
   font-family: var(--serif);
   font-size: 1.08rem;
   line-height: 1.4;
+  overflow-wrap: anywhere;   /* lange Wörter dürfen in schmalen Spalten umbrechen, statt herauszuragen */
 }
 
-/* Hauptgericht mit Foto/Beschreibung: klickbar, mit kleinem Kamera-Symbol */
+/* Hauptgericht: immer fett (auch als Button, daher die zusätzliche, spezifischere Regel) */
+.dish-main { font-weight: 700; }
+button.dish-detail.dish-main { font-weight: 700; }
+
+/* Hauptgericht mit Foto/Beschreibung: zusätzlich klickbar */
 button.dish-detail {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.4rem;
-  font: inherit;
+  display: inline;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
   color: inherit;
   background: none;
   border: 0;
@@ -315,7 +352,6 @@ button.dish-detail {
 }
 button.dish-detail:hover,
 button.dish-detail:focus-visible { text-decoration-color: currentColor; }
-button.dish-detail .dish-icon { flex: none; opacity: 0.7; align-self: center; }
 
 .allergens {
   display: flex;
@@ -374,7 +410,7 @@ button.dish-detail .dish-icon { flex: none; opacity: 0.7; align-self: center; }
   font-size: 0.95rem;
 }
 
-/* ---------- Schmale Bildschirme: Wochenwahl über die volle Breite ---------- */
+/* ---------- Schmale Bildschirme: Wochenwahl über die volle Breite, Trennlinie zwischen den Mahlzeiten ---------- */
 @media (max-width: 859px) {
   .week-nav { width: 100%; }
   .select-wrap { order: -1; flex: 1 0 100%; }
@@ -382,54 +418,9 @@ button.dish-detail .dish-icon { flex: none; opacity: 0.7; align-self: center; }
   .week-nav button { flex: 1; }
 }
 
-/* ---------- Breite Bildschirme: Tabelle Tag x Mahlzeit ---------- */
-@media (min-width: 860px) {
-  .grid-head,
-  .day {
-    display: grid;
-    grid-template-columns: var(--cols);
-    column-gap: 2rem;
-  }
-
-  .grid-head {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: var(--surface);
-    padding: 0.9rem 1rem 0.5rem 1.25rem;
-    font-weight: 700;
-    color: var(--strong);
-    border-bottom: 2px solid var(--strong);
-  }
-
-  .day-head {
-    display: block;
-    margin: 0;
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .day-title { margin-bottom: 0.5rem; }
-  .today-tag { display: inline-block; }
-  .day.is-today .day-title { margin-bottom: 0.5rem; }
-
-  /* Feste Spalten: fehlt eine Mahlzeit, rutscht die andere nicht in die falsche Spalte */
-  .meal { margin-top: 0; grid-row: 1; }
-  .meal-lunch { grid-column: 2; }
-  .meal-dinner { grid-column: 3; }
-  .meal + .meal { margin-top: 0; }
-
-  /* Die Spaltenüberschriften stehen oben; pro Zeile nur für Screenreader */
-  .meal-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
-  }
+@media (max-width: 640px) {
+  .meal-lunch { border-right: 1px solid var(--divider); padding-right: 0.6rem; }
+  .meal-dinner { padding-left: 0.6rem; }
 }
 
 /* ---------- Foto-Vorschau beim Überfahren mit der Maus (nur PC) ---------- */
@@ -480,14 +471,14 @@ body.detail-open { overflow: hidden; }
 .detail-dialog {
   position: relative;
   width: 100%;
-  max-width: 32rem;
+  max-width: 38rem;
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
   background: var(--surface);
   color: var(--ink);
   border-radius: 10px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-  padding: 1.25rem 1.25rem 1.5rem;
+  padding: 1.5rem 1.5rem 1.75rem;
   transform: translateY(12px) scale(0.98);
   opacity: 0;
   transition: opacity 0.22s ease, transform 0.22s ease;
@@ -513,21 +504,22 @@ body.detail-open { overflow: hidden; }
 }
 .detail-close:hover { background: var(--divider); }
 
-.detail-title { margin: 0 2.3rem 0.75rem 0; font-size: 1.3rem; font-weight: 800; }
+.detail-title { margin: 0 2.3rem 0.85rem 0; font-size: 1.4rem; font-weight: 800; }
 
 /* Bild schwebt an der Seite, der Text läuft links daneben (funktioniert auf PC und Handy gleich) */
 .detail-content { display: flow-root; }
-.detail-media { float: right; width: 42%; max-width: 12rem; margin: 0 0 0.75rem 1rem; }
+.detail-media { float: right; width: 52%; max-width: 17rem; margin: 0 0 0.75rem 1.1rem; }
 .detail-media img {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--chip-bg);
 }
 
 .detail-description { margin: 0 0 0.75rem; line-height: 1.55; }
+.detail-allergens:not([hidden]) { margin-bottom: 0.75rem; }
 .detail-allergens .allergens { margin-top: 0.25rem; }
 
 /* ---------- Bewegung reduzieren: Anwender-Einstellung respektieren ---------- */
