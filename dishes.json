@@ -1,9 +1,12 @@
   {
     "Wiener Schnitzel mit Kartoffelsalat": {
-      "image": "images/48942-wiener-schnitzel-kartoffelsalat-rezept.png",
-      "description": "wienerschnitzli"
+      "description": "Das Wiener Schnitzel mit Kartoffelsalat ist ein Gericht der österreichischen Küche, das aus einem panierten, in Fett ausgebackenen Schnitzel und einer Beilage aus mariniertem Kartoffelsalat besteht. Je nach Küche variieren die Details der Zubereitung: Das Schnitzel wird wahlweise in Schmalz, Butter oder Pflanzenöl gebraten, während der Kartoffelsalat je nach Rezeptur mit warmer Brühe, Essig, Öl, Zwiebeln oder Senf angemacht wird.",
+      "image": "images/48942-wiener-schnitzel-kartoffelsalat-rezept.png"
     },
     "Römische Griesnocken Tomatensauce": {
-      "description": "TEST."
+      "description": "Römische Grießnocken mit Tomatensauce (Gnocchi alla romana) sind ein Spezialitätengericht der italienischen Küche: Aus in Milch gekochtem Hartweizengrieß, Butter, Eigelb und Käse wird eine feste Masse geformt, in Taler geschnitten und anschließend zusammen mit Tomatensauce und Käse im Ofen gebacken. Je nach Zubereitung werden die Nocken direkt auf der Sauce eingebettet oder getrennt davon als Beilage serviert."
+    },
+    "Käseknödel mit Butter und Parmesan": {
+      "description": "Käseknödel mit Butter und Parmesan sind ein traditionelles Knödelgericht aus der alpinen Küche (insbesondere Südtirol und Österreich). Aus Semmelwürfeln, Milch, Eiern und geriebenem Käse geformte Knödel werden in Salzwasser gekocht und anschließend mit geschmolzener Butter sowie geriebenem Parmesan serviert. Je nach regionalem Rezept kommen unterschiedliche Schnittkäsesorten zum Einsatz, und die Butter wird teils bräunlich aufgeschäumt oder mit Salbei verfeinert."
     }
   }
