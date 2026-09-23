@@ -34,7 +34,7 @@
   // und werden neben "Mittagessen"/"Abendessen" angezeigt.
   // ANPASSEN: die Mittagszeit ist ein Platzhalter, bitte auf die echte Zeit ändern.
   var MEAL_TIMES = {
-    lunch: { start: "11:30", end: "13:00" },
+    lunch: { start: "12:45", end: "13:30" },
     dinner: { start: "18:00", end: "18:30" }
   };
 
