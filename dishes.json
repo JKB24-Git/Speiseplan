@@ -1,7 +1,8 @@
   {
     "Wiener Schnitzel mit Kartoffelsalat": {
       "description": "Das Wiener Schnitzel mit Kartoffelsalat ist ein Gericht der österreichischen Küche, das aus einem panierten, in Fett ausgebackenen Schnitzel und einer Beilage aus mariniertem Kartoffelsalat besteht. Je nach Küche variieren die Details der Zubereitung: Das Schnitzel wird wahlweise in Schmalz, Butter oder Pflanzenöl gebraten, während der Kartoffelsalat je nach Rezeptur mit warmer Brühe, Essig, Öl, Zwiebeln oder Senf angemacht wird.",
-      "image": "images/48942-wiener-schnitzel-kartoffelsalat-rezept.png"
+      "image": "images/wiener-schnitzel-kartoffelsalat-rezept.png",
+      "link": "https://de.wikipedia.org/wiki/Wiener_Schnitzel"
     },
     "Römische Griesnocken Tomatensauce": {
       "description": "Römische Grießnocken mit Tomatensauce (Gnocchi alla romana) sind ein Spezialitätengericht der italienischen Küche: Aus in Milch gekochtem Hartweizengrieß, Butter, Eigelb und Käse wird eine feste Masse geformt, in Taler geschnitten und anschließend zusammen mit Tomatensauce und Käse im Ofen gebacken. Je nach Zubereitung werden die Nocken direkt auf der Sauce eingebettet oder getrennt davon als Beilage serviert."
