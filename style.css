@@ -16,6 +16,8 @@
   --today-block-ink: #ffffff;
   --today-tag-bg: #ffffff;
   --today-tag-ink: #111111;
+  --next-bg: #edf3ff;
+  --next-accent: #234f9b;
   --chip-bg: #e6e6e6;       /* Allergene ohne eigene Farbe */
   --chip-ink: #111111;
   --chip-line: #b5b5b5;
@@ -53,6 +55,8 @@
     --today-block-ink: #ffffff;
     --today-tag-bg: #1a1a1a;
     --today-tag-ink: #ffffff;
+    --next-bg: #202b3d;
+    --next-accent: #b8ceff;
     --chip-bg: #2c2c2c;
     --chip-ink: #f2f2f2;
     --chip-line: #5c5c5c;
@@ -270,7 +274,12 @@ body {
 .meal + .meal { margin-top: 1.5rem; }
 
 /* Als Nächstes dran (nur beim heutigen Tag, nach den Essenszeiten in app.js) */
-.meal.is-next { box-shadow: inset 4px 0 0 0 var(--strong); padding-left: 0.6rem; }
+.meal.is-next {
+  background: var(--next-bg);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+.meal.is-next .meal-label { color: var(--next-accent); border-bottom-color: var(--next-accent); }
 
 .meal-label {
   margin: 0 0 0.5rem;
@@ -346,10 +355,15 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
 .al {
   position: relative;
   display: inline-flex;
+  flex: 0 0 1.6rem;
   align-items: center;
   justify-content: center;
-  min-width: 1.5rem;
+  width: 1.6rem;
+  min-width: 1.6rem;
   max-width: 1.6rem;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
   height: 1.5rem;
   padding: 0 0.3rem;
   border-radius: 4px;
@@ -372,19 +386,41 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
 }
 
 .al.is-open {
+  flex-basis: auto;
+  width: auto;
   max-width: 14rem;
   justify-content: flex-start;
   padding-left: 0.4rem;
+  overflow: visible;
 }
 .al.is-open .al-name { opacity: 1; margin-left: 0.35rem; }
 
 @media (hover: hover) and (pointer: fine) {
-  .al:hover {
-    max-width: 14rem;
-    justify-content: flex-start;
-    padding-left: 0.4rem;
+  .al-foldable.is-open {
+    z-index: 8;
+    flex-basis: 1.6rem;
+    width: 1.6rem;
+    max-width: 1.6rem;
+    padding-left: 0.3rem;
   }
-  .al:hover .al-name { opacity: 1; margin-left: 0.35rem; }
+  .al-foldable .al-name {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.35rem);
+    z-index: 9;
+    width: max-content;
+    max-width: min(18rem, 80vw);
+    padding: 0.35rem 0.55rem;
+    margin: 0;
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 2px 9px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    white-space: normal;
+    transform: translateX(-50%);
+  }
+  .al-foldable.is-open .al-name { opacity: 1; margin-left: 0; }
 }
 
 .al:not([style]) { box-shadow: inset 0 0 0 1px var(--chip-line); }   /* Allergene ohne eigene Farbe */
@@ -427,6 +463,15 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
 
 /* ---------- Schmale Bildschirme: Wochenwahl über die volle Breite ---------- */
 @media (max-width: 859px) {
+  .day.is-today .day-head { align-items: center; }
+  .day.is-today .today-tag {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    font-size: 1rem;
+    line-height: 1.2;
+    padding: 0.25rem 0.7rem;
+  }
   .week-nav { width: 100%; }
   .select-wrap { order: -1; flex: 1 0 100%; }
   .week-nav select { width: 100%; }
@@ -503,6 +548,13 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
 }
 
+@media (max-width: 600px) {
+  .detail-dialog { max-height: calc(100vh - 1.25rem); padding: 1.1rem 1.1rem 1.3rem; }
+  .detail-title { font-size: 1.25rem; margin-right: 2.1rem; }
+  .detail-media { float: none; width: 100%; max-width: none; margin: 0 0 1rem; }
+  .detail-media img { aspect-ratio: 16 / 10; max-height: 40vh; object-fit: cover; }
+}
+
 /* ---------- Foto und Beschreibung: Dialog beim Anklicken ---------- */
 body.detail-open { overflow: hidden; }
 
@@ -530,7 +582,7 @@ body.detail-open { overflow: hidden; }
 .detail-dialog {
   position: relative;
   width: 100%;
-  max-width: 38rem;
+  max-width: 50rem;
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
   background: var(--surface);
@@ -563,11 +615,11 @@ body.detail-open { overflow: hidden; }
 }
 .detail-close:hover { background: var(--divider); }
 
-.detail-title { margin: 0 2.3rem 0.85rem 0; font-size: 1.4rem; font-weight: 800; }
+.detail-title { margin: 0 2.3rem 0.85rem 0; font-size: 1.55rem; font-weight: 800; }
 
 /* Bild schwebt an der Seite, der Text läuft links daneben (funktioniert auf PC und Handy gleich) */
 .detail-content { display: flow-root; }
-.detail-media { float: right; width: 52%; max-width: 17rem; margin: 0 0 0.75rem 1.1rem; }
+.detail-media { float: right; width: 44%; max-width: 23rem; margin: 0 0 0.85rem 1.25rem; }
 .detail-media img {
   display: block;
   width: 100%;
@@ -578,7 +630,8 @@ body.detail-open { overflow: hidden; }
   cursor: zoom-in;
 }
 
-.detail-description { margin: 0 0 0.75rem; line-height: 1.55; }
+.detail-description { margin: 0 0 0.75rem; line-height: 1.6; }
+.detail-link { display: inline-block; margin-top: 0.25rem; font-weight: 700; color: var(--strong); text-underline-offset: 3px; }
 .detail-allergens:not([hidden]) { margin-bottom: 0.75rem; }
 .detail-allergens .allergens { margin-top: 0.25rem; }
 
@@ -638,3 +691,4 @@ body.detail-open { overflow: hidden; }
   .today-tag, .day.is-today .today-tag { border: 1px solid #000; background: none; color: #000; }
   .legend { padding-bottom: 0; break-inside: avoid; }
 }
+

@@ -24,7 +24,8 @@
     detailHint: "Foto und Beschreibung ansehen",
     detailClose: "Schließen",
     zoomHint: "Bild vergrößern",
-    zoomClose: "Bild verkleinern"
+    zoomClose: "Bild verkleinern",
+    detailLink: "Mehr erfahren ↗"
   };
 
   var MEALS = [
@@ -202,8 +203,15 @@
         if (!entry || typeof entry !== "object") return;
         var image = typeof entry.image === "string" && entry.image.trim() ? entry.image.trim() : null;
         var description = typeof entry.description === "string" && entry.description.trim() ? entry.description.trim() : null;
+        var link = typeof entry.link === "string" && entry.link.trim() ? entry.link.trim() : null;
+        if (link) {
+          try {
+            var parsedLink = new URL(link, window.location.href);
+            link = parsedLink.protocol === "http:" || parsedLink.protocol === "https:" ? parsedLink.href : null;
+          } catch (e) { link = null; }
+        }
         var key = name.trim();
-        if (key && (image || description)) map[key] = { image: image, description: description };
+        if (key && (image || description || link)) map[key] = { image: image, description: description, link: link };
       });
     }
     state.dishes = map;
@@ -234,7 +242,11 @@
   var openChip = null;
 
   function closeOpenChip() {
-    if (openChip) { openChip.classList.remove("is-open"); openChip = null; }
+    if (openChip) {
+      openChip.classList.remove("is-open");
+      openChip.setAttribute("aria-expanded", "false");
+      openChip = null;
+    }
   }
 
   // Ein Kästchen; foldable=true fügt den (per Klick/Hover aufklappbaren) Namen hinzu.
@@ -242,7 +254,12 @@
   function makeChip(code, foldable) {
     var info = state.allergenByCode[code];
     var name = info ? info.name : TEXT.unknownAllergen;
-    var chip = el("span", "al" + (info ? "" : " al-unknown"));
+    var chip = el(foldable ? "button" : "span", "al" + (foldable ? " al-foldable" : "") + (info ? "" : " al-unknown"));
+    if (foldable) {
+      chip.type = "button";
+      chip.setAttribute("aria-expanded", "false");
+      chip.setAttribute("aria-label", code + ": " + name);
+    }
     chip.setAttribute("data-code", code);
     if (info && info.color) {
       // Über die Style-Eigenschaften (nicht per HTML-Attribut), damit die Sicherheitsregel in index.html nicht stört.
@@ -278,13 +295,17 @@
   // Handy: Antippen klappt ein Kästchen auf, ein zweites Kästchen antippen klappt das erste wieder zu.
   // Auf Geräten mit Maus übernimmt reines CSS (:hover) das Aufklappen, hier passiert dann nichts.
   document.addEventListener("click", function (e) {
-    var chip = e.target.closest ? e.target.closest(".al") : null;
-    if (canHover()) return;
+    var chip = e.target.closest ? e.target.closest(".al-foldable") : null;
     if (!chip) { closeOpenChip(); return; }
     if (chip === openChip) { closeOpenChip(); return; }
     closeOpenChip();
     chip.classList.add("is-open");
+    chip.setAttribute("aria-expanded", "true");
     openChip = chip;
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeOpenChip();
   });
 
   /* ---------- Foto/Beschreibung: Vorschau beim Überfahren mit der Maus ---------- */
@@ -423,10 +444,15 @@
 
     var body = el("div", "detail-body");
     var desc = el("p", "detail-description");
+    var link = el("a", "detail-link", TEXT.detailLink);
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.hidden = true;
     var allergenWrap = el("div", "detail-allergens");
 
     body.appendChild(allergenWrap);
     body.appendChild(desc);
+    body.appendChild(link);
     content.appendChild(media);
     content.appendChild(body);
 
@@ -438,7 +464,7 @@
 
     overlay.addEventListener("click", function (e) { if (e.target === overlay) closeDetail(); });
 
-    detail = { overlay: overlay, dialog: dialog, closeBtn: closeBtn, title: title, media: media, img: img, desc: desc, allergenWrap: allergenWrap, closeTimer: null };
+    detail = { overlay: overlay, dialog: dialog, closeBtn: closeBtn, title: title, media: media, img: img, desc: desc, link: link, allergenWrap: allergenWrap, closeTimer: null };
     return detail;
   }
 
@@ -446,9 +472,15 @@
     if (isLightboxOpen()) return;   // die Lightbox hat ihren eigenen Escape/Tab-Handler
     if (e.key === "Escape") { closeDetail(); return; }
     if (e.key === "Tab") {
-      // Im Dialog gibt es nur Bild und Schließen-Button als Ziel: Fokus dort festhalten.
+      // Nur sichtbare Ziele in den Fokusumlauf aufnehmen (das Bild kann fehlen).
+      var focusables = [detail.closeBtn];
+      if (!detail.media.hidden && !detail.img.hidden) focusables.push(detail.img);
+      var index = focusables.indexOf(document.activeElement);
+      var next = e.shiftKey
+        ? (index <= 0 ? focusables.length - 1 : index - 1)
+        : (index < 0 || index === focusables.length - 1 ? 0 : index + 1);
       e.preventDefault();
-      (document.activeElement === detail.closeBtn ? detail.img : detail.closeBtn).focus();
+      focusables[next].focus();
     }
   }
 
@@ -470,6 +502,8 @@
 
     d.desc.textContent = info.description || "";
     d.desc.hidden = !info.description;
+    d.link.hidden = !info.link;
+    if (info.link) d.link.href = info.link;
 
     d.allergenWrap.textContent = "";
     if (allergens && allergens.length) {
@@ -686,7 +720,9 @@
       if (state.firstView) {
         state.firstView = false;
         var todayRow = ui.plan.querySelector(".is-today");
-        if (todayRow && file === newest && !location.hash) todayRow.scrollIntoView({ block: "nearest" });
+        if (todayRow && file === newest) {
+        todayRow.scrollIntoView({ block: "center", behavior: reduceMotion() ? "auto" : "smooth" });
+      }
       }
     }).catch(function (err) {
       if (id !== state.request) return;
@@ -755,3 +791,4 @@
     showMessage(TEXT.loadError);
   });
 })();
+
