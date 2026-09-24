@@ -308,12 +308,6 @@ body {
 
 .dishes li + li { margin-top: 0.7rem; }
 
-/* Hauptgericht-Zeile: dezenter Strich an der Seite, zusätzlich zur fetten Schrift */
-.dishes li.is-main {
-  box-shadow: inset 3px 0 0 0 var(--divider);
-  padding-left: 0.65rem;
-}
-
 .dish {
   font-family: inherit;
   font-size: 1.08rem;
@@ -338,13 +332,10 @@ button.dish-detail {
   padding: 0;
   text-align: left;
   cursor: pointer;
-  text-decoration-line: underline;
-  text-decoration-style: dotted;
-  text-decoration-color: var(--muted);
-  text-underline-offset: 3px;
 }
 button.dish-detail:hover,
-button.dish-detail:focus-visible { text-decoration-color: currentColor; }
+button.dish-detail:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+button.dish-detail:hover { color: var(--muted); }
 
 .allergens {
   display: flex;
@@ -510,7 +501,7 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
     align-items: center;
     justify-content: flex-start;
     gap: 0.45rem;
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     line-height: 1.2;
     text-align: left;
   }

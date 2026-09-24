@@ -496,6 +496,12 @@
 
     var body = el("div", "detail-body");
     var desc = el("p", "detail-description");
+    desc.addEventListener("click", function () {
+      if (canHover()) return;
+      var selection = window.getSelection ? window.getSelection() : null;
+      if (selection && !selection.isCollapsed && selection.toString().trim()) return;
+      closeDetail();
+    });
     var link = el("a", "detail-link", "↗");
     link.target = "_blank";
     link.rel = "noopener noreferrer";
