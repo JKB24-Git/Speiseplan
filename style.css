@@ -16,8 +16,10 @@
   --today-block-ink: #ffffff;
   --today-tag-bg: #ffffff;
   --today-tag-ink: #111111;
-  --next-bg: #edf3ff;
-  --next-accent: #234f9b;
+  --next-bg: #fff0b8;
+  --next-accent: #744c00;
+  --next-tag-bg: #744c00;
+  --next-tag-ink: #ffffff;
   --day-divider: #777777;
   --detail-link-color: #555555;
   --chip-bg: #e6e6e6;       /* Allergene ohne eigene Farbe */
@@ -57,8 +59,10 @@
     --today-block-ink: #ffffff;
     --today-tag-bg: #1a1a1a;
     --today-tag-ink: #ffffff;
-    --next-bg: #202b3d;
-    --next-accent: #b8ceff;
+    --next-bg: #3a2e14;
+    --next-accent: #ffe08a;
+    --next-tag-bg: #ffe08a;
+    --next-tag-ink: #241b08;
     --day-divider: #777777;
     --detail-link-color: #bdbdbd;
     --chip-bg: #2c2c2c;
@@ -222,11 +226,12 @@ body {
 .grid-head { display: none; }
 
 .day {
+  margin-top: 0.25rem;
   padding: 2rem var(--pad-x);
   border-top: 3px solid var(--day-divider);
   scroll-margin: 1rem;
 }
-.day:first-child { border-top: 0; }
+.day:first-child { margin-top: 0; border-top: 0; }
 
 /* Heutiger Tag: getönte Zeile und ein dunkler Block hinter dem Tagesnamen */
 .day.is-today { background: var(--today-bg); }
@@ -280,10 +285,24 @@ body {
 /* Als Nächstes dran (nur beim heutigen Tag, nach den Essenszeiten in app.js) */
 .meal.is-next {
   background: var(--next-bg);
+  border: 2px solid var(--next-accent);
   border-radius: 8px;
   padding: 0.75rem;
 }
 .meal.is-next .meal-label { color: var(--next-accent); border-bottom-color: var(--next-accent); }
+
+.next-tag {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 0.65rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--next-tag-bg);
+  color: var(--next-tag-ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
 
 .meal-label {
   margin: 0 0 0.5rem;
@@ -388,15 +407,13 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
   z-index: 10;
   display: block;
   width: max-content;
-  min-width: 8rem;
-  max-width: min(22rem, calc(100vw - 1rem));
-  padding: 0.55rem 0.8rem;
-  border: 1px solid var(--divider);
+  max-width: min(14rem, calc(100vw - 0.75rem));
+  padding: 0.3rem 0.5rem;
   border-radius: 6px;
   background: var(--surface);
   color: var(--ink);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
-  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  font-size: 0.9rem;
   line-height: 1.35;
   text-align: center;
   white-space: normal;
@@ -406,6 +423,17 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
   pointer-events: none;
   font-weight: 600;
   transition: opacity 0.15s ease;
+}
+.al-name::after {
+  position: absolute;
+  left: var(--allergen-arrow-x, 50%);
+  bottom: -0.3rem;
+  width: 0;
+  height: 0;
+  border: 0.3rem solid transparent;
+  border-top-color: var(--surface);
+  content: "";
+  transform: translateX(-50%);
 }
 
 .al.is-open {
@@ -418,6 +446,7 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
 .al-foldable.is-open .al-name,
 .al-foldable:focus-visible .al-name { opacity: 1; }
 .al-foldable:focus-visible { z-index: 8; overflow: visible; }
+.al:focus:not(:focus-visible) { outline: none; }
 
 @media (hover: hover) and (pointer: fine) {
   .al-foldable:hover .al-name { opacity: 1; }
@@ -614,6 +643,7 @@ body.detail-open { overflow: hidden; }
 
 /* Bild schwebt an der Seite, der Text läuft links daneben (funktioniert auf PC und Handy gleich) */
 .detail-content { display: flow-root; }
+.detail-body { display: flow-root; }
 .detail-media { float: right; width: 44%; max-width: 23rem; margin: 0 0 0.85rem 1.25rem; }
 .detail-media img {
   display: block;
@@ -627,12 +657,12 @@ body.detail-open { overflow: hidden; }
 
 .detail-description { margin: 0 0 0.75rem; line-height: 1.6; }
 .detail-link {
-  float: right;
+  float: left;
   max-width: 70%;
-  margin: 0.4rem 0 0.25rem 1rem;
+  margin: 0.4rem 1rem 0.25rem 0;
   color: var(--detail-link-color);
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 500;
   overflow-wrap: anywhere;
   text-decoration: none;
   text-underline-offset: 3px;

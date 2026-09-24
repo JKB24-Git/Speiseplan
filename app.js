@@ -25,7 +25,8 @@
     detailClose: "Schließen",
     zoomHint: "Bild vergrößern",
     zoomClose: "Bild verkleinern",
-    linkHint: "Externe Seite öffnen"
+    linkHint: "Externe Seite öffnen",
+    nextMeal: "Als Nächstes"
   };
 
   var MEALS = [
@@ -257,6 +258,7 @@
     var left = Math.max(8, Math.min(window.innerWidth - width - 8, r.left + (r.width - width) / 2));
     label.style.left = (left - r.left) + "px";
     label.style.transform = "none";
+    label.style.setProperty("--allergen-arrow-x", (r.left + r.width / 2 - left) + "px");
   }
 
   // Ein Kästchen; foldable=true fügt den (per Klick/Hover aufklappbaren) Namen hinzu.
@@ -488,9 +490,9 @@
     var allergenWrap = el("div", "detail-allergens");
 
     body.appendChild(allergenWrap);
+    body.appendChild(media);
     body.appendChild(desc);
     body.appendChild(link);
-    content.appendChild(media);
     content.appendChild(body);
 
     dialog.appendChild(closeBtn);
@@ -500,7 +502,7 @@
     document.body.appendChild(overlay);
 
     dialog.addEventListener("click", function (e) {
-      if (canHover() || (e.target.closest && e.target.closest("img"))) return;
+      if (canHover() || (e.target.closest && (e.target.closest("img") || e.target.closest(".al-foldable")))) return;
       var selection = window.getSelection && window.getSelection();
       if (selection && String(selection).trim()) return;
       closeDetail();
@@ -615,6 +617,7 @@
     label.appendChild(document.createTextNode(meal.label + " "));
     label.appendChild(el("span", "meal-time", formatRange(MEAL_TIMES[meal.key])));
     cell.appendChild(label);
+    if (isNext) cell.appendChild(el("span", "next-tag", TEXT.nextMeal));
 
     var list = el("ul", "dishes");
     items.forEach(function (item, idx) {
