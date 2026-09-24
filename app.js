@@ -25,7 +25,7 @@
     detailClose: "Schließen",
     zoomHint: "Bild vergrößern",
     zoomClose: "Bild verkleinern",
-    detailLink: "Mehr erfahren ↗"
+    linkHint: "Externe Seite öffnen"
   };
 
   var MEALS = [
@@ -249,6 +249,16 @@
     }
   }
 
+  function positionAllergenName(chip) {
+    var label = chip && chip.querySelector(".al-name");
+    if (!label) return;
+    var r = chip.getBoundingClientRect();
+    var width = label.getBoundingClientRect().width;
+    var left = Math.max(8, Math.min(window.innerWidth - width - 8, r.left + (r.width - width) / 2));
+    label.style.left = (left - r.left) + "px";
+    label.style.transform = "none";
+  }
+
   // Ein Kästchen; foldable=true fügt den (per Klick/Hover aufklappbaren) Namen hinzu.
   // Ohne foldable bleibt es ein reines Anzeige-Kästchen (z. B. in der Legende, wo der Name schon danebensteht).
   function makeChip(code, foldable) {
@@ -292,16 +302,43 @@
     return wrap;
   }
 
-  // Handy: Antippen klappt ein Kästchen auf, ein zweites Kästchen antippen klappt das erste wieder zu.
-  // Auf Geräten mit Maus übernimmt reines CSS (:hover) das Aufklappen, hier passiert dann nichts.
+  // Touch: Antippen zeigt den Namen. Maus und Tastatur nutzen Hover/Fokus.
   document.addEventListener("click", function (e) {
     var chip = e.target.closest ? e.target.closest(".al-foldable") : null;
+    if (chip && canHover()) return;
     if (!chip) { closeOpenChip(); return; }
     if (chip === openChip) { closeOpenChip(); return; }
     closeOpenChip();
     chip.classList.add("is-open");
     chip.setAttribute("aria-expanded", "true");
     openChip = chip;
+    positionAllergenName(chip);
+  });
+
+  document.addEventListener("mouseover", function (e) {
+    if (!canHover() || !e.target.closest) return;
+    var chip = e.target.closest(".al-foldable");
+    if (!chip) return;
+    chip.setAttribute("aria-expanded", "true");
+    positionAllergenName(chip);
+  });
+
+  document.addEventListener("focusin", function (e) {
+    var chip = e.target.closest ? e.target.closest(".al-foldable") : null;
+    if (!chip) return;
+    chip.setAttribute("aria-expanded", "true");
+    positionAllergenName(chip);
+  });
+
+  document.addEventListener("mouseout", function (e) {
+    if (!canHover() || !e.target.closest) return;
+    var chip = e.target.closest(".al-foldable");
+    if (chip && !chip.contains(e.relatedTarget)) chip.setAttribute("aria-expanded", "false");
+  });
+
+  document.addEventListener("focusout", function (e) {
+    var chip = e.target.closest ? e.target.closest(".al-foldable") : null;
+    if (chip && !chip.contains(e.relatedTarget)) chip.setAttribute("aria-expanded", "false");
   });
 
   document.addEventListener("keydown", function (e) {
@@ -436,7 +473,7 @@
     img.tabIndex = 0;
     img.setAttribute("role", "button");
     img.title = TEXT.zoomHint;
-    img.addEventListener("click", function () { openLightbox(img.src, img); });
+    img.addEventListener("click", function (e) { e.stopPropagation(); openLightbox(img.src, img); });
     img.addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLightbox(img.src, img); }
     });
@@ -444,7 +481,7 @@
 
     var body = el("div", "detail-body");
     var desc = el("p", "detail-description");
-    var link = el("a", "detail-link", TEXT.detailLink);
+    var link = el("a", "detail-link", "↗");
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     link.hidden = true;
@@ -462,7 +499,12 @@
     overlay.appendChild(dialog);
     document.body.appendChild(overlay);
 
-    overlay.addEventListener("click", function (e) { if (e.target === overlay) closeDetail(); });
+    dialog.addEventListener("click", function (e) {
+      if (canHover() || (e.target.closest && e.target.closest("img"))) return;
+      var selection = window.getSelection && window.getSelection();
+      if (selection && String(selection).trim()) return;
+      closeDetail();
+    });
 
     detail = { overlay: overlay, dialog: dialog, closeBtn: closeBtn, title: title, media: media, img: img, desc: desc, link: link, allergenWrap: allergenWrap, closeTimer: null };
     return detail;
@@ -470,11 +512,12 @@
 
   function onDetailKeydown(e) {
     if (isLightboxOpen()) return;   // die Lightbox hat ihren eigenen Escape/Tab-Handler
-    if (e.key === "Escape") { closeDetail(); return; }
+    if (e.key === "Escape" && !canHover()) { closeDetail(); return; }
     if (e.key === "Tab") {
       // Nur sichtbare Ziele in den Fokusumlauf aufnehmen (das Bild kann fehlen).
       var focusables = [detail.closeBtn];
       if (!detail.media.hidden && !detail.img.hidden) focusables.push(detail.img);
+      if (!detail.link.hidden) focusables.push(detail.link);
       var index = focusables.indexOf(document.activeElement);
       var next = e.shiftKey
         ? (index <= 0 ? focusables.length - 1 : index - 1)
@@ -503,7 +546,13 @@
     d.desc.textContent = info.description || "";
     d.desc.hidden = !info.description;
     d.link.hidden = !info.link;
-    if (info.link) d.link.href = info.link;
+    if (info.link) {
+      d.link.href = info.link;
+      var host = new URL(info.link, window.location.href).host;
+      d.link.textContent = host;
+      d.link.title = info.link;
+      d.link.setAttribute("aria-label", TEXT.linkHint + ": " + host);
+    }
 
     d.allergenWrap.textContent = "";
     if (allergens && allergens.length) {
@@ -721,8 +770,8 @@
         state.firstView = false;
         var todayRow = ui.plan.querySelector(".is-today");
         if (todayRow && file === newest) {
-        todayRow.scrollIntoView({ block: "center", behavior: reduceMotion() ? "auto" : "smooth" });
-      }
+          todayRow.scrollIntoView({ block: "center", behavior: reduceMotion() ? "auto" : "smooth" });
+        }
       }
     }).catch(function (err) {
       if (id !== state.request) return;
@@ -791,4 +840,3 @@
     showMessage(TEXT.loadError);
   });
 })();
-
