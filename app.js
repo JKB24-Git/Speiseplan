@@ -22,7 +22,9 @@
     unknownAllergen: "Unbekannter Code",
     allergensPrefix: "Allergene: ",
     detailHint: "Foto und Beschreibung ansehen",
-    detailClose: "Schließen"
+    detailClose: "Schließen",
+    zoomHint: "Bild vergrößern",
+    zoomClose: "Bild verkleinern"
   };
 
   var MEALS = [
@@ -32,7 +34,6 @@
 
   // Essenszeiten: bestimmen, welche Mahlzeit heute als "als Nächstes" markiert wird,
   // und werden neben "Mittagessen"/"Abendessen" angezeigt.
-  // ANPASSEN: die Mittagszeit ist ein Platzhalter, bitte auf die echte Zeit ändern.
   var MEAL_TIMES = {
     lunch: { start: "12:45", end: "13:30" },
     dinner: { start: "18:00", end: "18:30" }
@@ -229,9 +230,18 @@
     ui.plan.appendChild(el("p", "empty day", message));
   }
 
-  // Ein Allergen-Kästchen; Farbe und Name kommen aus allergens.json
-  function makeChip(code, options) {
+  /* ---------- Allergen-Kästchen: Klick (Handy) bzw. Hover (PC, per CSS) klappt den Namen auf ---------- */
+  var openChip = null;
+
+  function closeOpenChip() {
+    if (openChip) { openChip.classList.remove("is-open"); openChip = null; }
+  }
+
+  // Ein Kästchen; foldable=true fügt den (per Klick/Hover aufklappbaren) Namen hinzu.
+  // Ohne foldable bleibt es ein reines Anzeige-Kästchen (z. B. in der Legende, wo der Name schon danebensteht).
+  function makeChip(code, foldable) {
     var info = state.allergenByCode[code];
+    var name = info ? info.name : TEXT.unknownAllergen;
     var chip = el("span", "al" + (info ? "" : " al-unknown"));
     chip.setAttribute("data-code", code);
     if (info && info.color) {
@@ -240,11 +250,12 @@
       chip.style.color = inkFor(info.color);
     }
     var letter = el("span", "", code);
-    if (options && options.hidden) {
-      chip.title = info ? info.name : TEXT.unknownAllergen;
-      letter.setAttribute("aria-hidden", "true");
-    }
+    letter.setAttribute("aria-hidden", "true");
     chip.appendChild(letter);
+    if (foldable) {
+      chip.appendChild(el("span", "al-name", name));
+      chip.appendChild(el("span", "sr", name));
+    }
     return chip;
   }
 
@@ -260,14 +271,21 @@
     function rank(c) { return state.allergenByCode[c] ? state.allergenByCode[c].order : 1000 + c.charCodeAt(0); }
     list.sort(function (a, b) { return rank(a) - rank(b); });
 
-    list.forEach(function (code, i) {
-      var info = state.allergenByCode[code];
-      var chip = makeChip(code, { hidden: true });
-      chip.appendChild(el("span", "sr", (info ? info.name : TEXT.unknownAllergen) + (i < list.length - 1 ? ", " : "")));
-      wrap.appendChild(chip);
-    });
+    list.forEach(function (code) { wrap.appendChild(makeChip(code, true)); });
     return wrap;
   }
+
+  // Handy: Antippen klappt ein Kästchen auf, ein zweites Kästchen antippen klappt das erste wieder zu.
+  // Auf Geräten mit Maus übernimmt reines CSS (:hover) das Aufklappen, hier passiert dann nichts.
+  document.addEventListener("click", function (e) {
+    var chip = e.target.closest ? e.target.closest(".al") : null;
+    if (canHover()) return;
+    if (!chip) { closeOpenChip(); return; }
+    if (chip === openChip) { closeOpenChip(); return; }
+    closeOpenChip();
+    chip.classList.add("is-open");
+    openChip = chip;
+  });
 
   /* ---------- Foto/Beschreibung: Vorschau beim Überfahren mit der Maus ---------- */
   var hoverBox = null;
@@ -319,6 +337,53 @@
     trigger.addEventListener("blur", hideHoverBox);
   }
 
+  /* ---------- Foto groß: Bild antippen/anklicken füllt die Bildschirmmitte, nochmal antippen schließt es ---------- */
+  var lightbox = null;
+  var lightboxTrigger = null;
+
+  function ensureLightbox() {
+    if (lightbox) return lightbox;
+    var overlay = el("div", "lightbox-overlay");
+    overlay.hidden = true;
+    overlay.tabIndex = -1;
+    var img = el("img", "lightbox-img");
+    img.alt = "";
+    overlay.appendChild(img);
+    document.body.appendChild(overlay);
+    overlay.addEventListener("click", closeLightbox);
+    lightbox = { overlay: overlay, img: img, closeTimer: null };
+    return lightbox;
+  }
+
+  function openLightbox(src, triggerEl) {
+    var lb = ensureLightbox();
+    clearTimeout(lb.closeTimer);
+    lb.img.src = src;
+    lightboxTrigger = triggerEl || null;
+    lb.overlay.hidden = false;
+    void lb.overlay.offsetWidth;
+    lb.overlay.classList.add("is-visible");
+    document.addEventListener("keydown", onLightboxKeydown);
+    lb.overlay.focus();
+  }
+
+  function closeLightbox() {
+    var lb = lightbox;
+    if (!lb || lb.overlay.hidden) return;
+    lb.overlay.classList.remove("is-visible");
+    document.removeEventListener("keydown", onLightboxKeydown);
+    var wait = reduceMotion() ? 0 : 200;
+    lb.closeTimer = setTimeout(function () { lb.overlay.hidden = true; }, wait);
+    if (lightboxTrigger) { lightboxTrigger.focus(); lightboxTrigger = null; }
+  }
+
+  function onLightboxKeydown(e) {
+    if (e.key === "Escape") { closeLightbox(); return; }
+    if (e.key === "Tab") { e.preventDefault(); lightbox.overlay.focus(); }
+  }
+
+  function isLightboxOpen() { return !!(lightbox && !lightbox.overlay.hidden); }
+
   /* ---------- Foto/Beschreibung: Dialog beim Anklicken ---------- */
   var detail = null;
   var detailTrigger = null;
@@ -347,6 +412,13 @@
     var media = el("div", "detail-media");
     var img = el("img");
     img.loading = "lazy";
+    img.tabIndex = 0;
+    img.setAttribute("role", "button");
+    img.title = TEXT.zoomHint;
+    img.addEventListener("click", function () { openLightbox(img.src, img); });
+    img.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLightbox(img.src, img); }
+    });
     media.appendChild(img);
 
     var body = el("div", "detail-body");
@@ -371,11 +443,12 @@
   }
 
   function onDetailKeydown(e) {
+    if (isLightboxOpen()) return;   // die Lightbox hat ihren eigenen Escape/Tab-Handler
     if (e.key === "Escape") { closeDetail(); return; }
     if (e.key === "Tab") {
-      // Im Dialog gibt es nur den Schließen-Button als Ziel: Fokus dort festhalten.
+      // Im Dialog gibt es nur Bild und Schließen-Button als Ziel: Fokus dort festhalten.
       e.preventDefault();
-      detail.closeBtn.focus();
+      (document.activeElement === detail.closeBtn ? detail.img : detail.closeBtn).focus();
     }
   }
 
@@ -416,6 +489,7 @@
   }
 
   function closeDetail() {
+    closeLightbox();
     var d = detail;
     if (!d || d.overlay.hidden) return;
     d.overlay.classList.remove("is-visible");
@@ -454,12 +528,17 @@
     var mainIndex = items.length >= 2 ? items.length - 2 : -1;
 
     var cell = el("div", "meal meal-" + meal.key + (isNext ? " is-next" : ""));
-    cell.appendChild(el("h3", "meal-label", meal.label));
+    var label = el("h3", "meal-label");
+    label.appendChild(document.createTextNode(meal.label + " "));
+    label.appendChild(el("span", "meal-time", formatRange(MEAL_TIMES[meal.key])));
+    cell.appendChild(label);
+
     var list = el("ul", "dishes");
     items.forEach(function (item, idx) {
       if (!item || typeof item.name !== "string") return;
-      var li = el("li");
-      li.appendChild(renderDish(item, idx === mainIndex));
+      var isMain = idx === mainIndex;
+      var li = el("li", isMain ? "is-main" : "");
+      li.appendChild(renderDish(item, isMain));
       if (Array.isArray(item.allergens) && item.allergens.length) {
         li.appendChild(allergenChips(item.allergens));
       }
@@ -563,9 +642,7 @@
     ui.legend.textContent = "";
     state.allergens.forEach(function (a) {
       var li = el("li");
-      var chip = makeChip(a.code, { hidden: true });
-      chip.removeAttribute("title");
-      li.appendChild(chip);
+      li.appendChild(makeChip(a.code, false));
       li.appendChild(el("span", "", a.name));
       ui.legend.appendChild(li);
     });
@@ -577,6 +654,7 @@
   function route() {
     if (!state.files.length) return;
     closeDetail();
+    closeOpenChip();
 
     var newest = state.files[0];
     var raw = location.hash.replace(/^#/, "");
@@ -635,7 +713,7 @@
      ------------------------------------------------------------ */
   showMessage(TEXT.loading);
 
-  // Uhrzeiten neben "Mittagessen"/"Abendessen" (oben in der Leiste, auf allen Bildschirmgrößen).
+  // Uhrzeiten neben "Mittagessen"/"Abendessen" oben in der Leiste (nur am PC sichtbar).
   (function initMealTimeLabels() {
     var lunchEl = $("gh-lunch"), dinnerEl = $("gh-dinner");
     if (lunchEl) { lunchEl.appendChild(document.createTextNode(" ")); lunchEl.appendChild(el("span", "meal-time", formatRange(MEAL_TIMES.lunch))); }

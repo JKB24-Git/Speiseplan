@@ -32,9 +32,9 @@
 
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --cols: clamp(5.5rem, 24vw, 10.5rem) minmax(0, 1fr) minmax(0, 1fr);
-  --col-gap: clamp(0.75rem, 4vw, 2rem);
-  --pad-x: clamp(0.75rem, 4vw, 1.25rem);
+  --cols: 10.5rem minmax(0, 1fr) minmax(0, 1fr);
+  --col-gap: 2rem;
+  --pad-x: 1.25rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -210,38 +210,13 @@ body {
 /* Kurzes Überblenden beim Wechsel der Woche (siehe app.js: renderWeekAnimated) */
 .panel.is-changing { opacity: 0; transform: translateY(6px); }
 
-.grid-head,
-.day {
-  display: grid;
-  grid-template-columns: var(--cols);
-  column-gap: var(--col-gap);
-}
-
-.grid-head {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: var(--surface);
-  padding: 0.9rem var(--pad-x) 0.5rem;
-  font-size: clamp(0.85rem, 3.5vw, 1rem);
-  font-weight: 700;
-  color: var(--strong);
-  border-bottom: 2px solid var(--strong);
-  overflow-wrap: anywhere;   /* Sicherheitsnetz, falls trotzdem einmal zu wenig Platz ist */
-}
-
-.meal-time {
-  display: block;
-  margin-top: 0.1rem;
-  color: var(--muted);
-  font-weight: 400;
-  font-size: 0.85em;
-}
+/* Die Leiste "Mittagessen | Abendessen" oben ist nur bei der PC-Tabelle sichtbar (siehe unten) */
+.grid-head { display: none; }
 
 .day {
   padding: 2rem var(--pad-x);
   border-top: 2px solid var(--divider);
-  scroll-margin: 4rem 0 1rem;   /* oben Platz für die feste Leiste */
+  scroll-margin: 1rem;
 }
 .day:first-child { border-top: 0; }
 
@@ -249,18 +224,18 @@ body {
 .day.is-today { background: var(--today-bg); }
 
 .day-head {
-  display: block;
-  margin: 0;
-  grid-column: 1;
-  grid-row: 1;
-  align-self: start;   /* nicht auf die volle Zeilenhöhe strecken (sonst viel Leerraum in der Box) */
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
-.day-title { display: flex; flex-direction: column; margin-bottom: 0.5rem; }
+.day-title { display: flex; flex-direction: column; }
 
 .day-name {
   margin: 0;
-  font-size: clamp(1rem, 4.5vw, 1.3rem);
+  font-size: 1.3rem;
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -292,25 +267,26 @@ body {
 .day.is-today .day-date { color: inherit; opacity: 0.8; }
 .day.is-today .today-tag { background: var(--today-tag-bg); color: var(--today-tag-ink); }
 
-/* Feste Spalten: fehlt eine Mahlzeit, rutscht die andere nicht in die falsche Spalte */
-.meal { grid-row: 1; }
-.meal-lunch { grid-column: 2; }
-.meal-dinner { grid-column: 3; }
+.meal + .meal { margin-top: 1.5rem; }
 
 /* Als Nächstes dran (nur beim heutigen Tag, nach den Essenszeiten in app.js) */
 .meal.is-next { box-shadow: inset 4px 0 0 0 var(--strong); padding-left: 0.6rem; }
 
-/* Spaltenüberschriften stehen oben in der Leiste; diese hier ist nur für Screenreader */
 .meal-label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid var(--strong);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--strong);
+}
+
+.meal-time {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.85em;
 }
 
 .dishes {
@@ -321,6 +297,12 @@ body {
 
 .dishes li + li { margin-top: 0.7rem; }
 
+/* Hauptgericht-Zeile: dezenter Strich an der Seite, zusätzlich zur fetten Schrift */
+.dishes li.is-main {
+  box-shadow: inset 3px 0 0 0 var(--divider);
+  padding-left: 0.65rem;
+}
+
 .dish {
   font-family: var(--serif);
   font-size: 1.08rem;
@@ -328,9 +310,9 @@ body {
   overflow-wrap: anywhere;   /* lange Wörter dürfen in schmalen Spalten umbrechen, statt herauszuragen */
 }
 
-/* Hauptgericht: immer fett (auch als Button, daher die zusätzliche, spezifischere Regel) */
-.dish-main { font-weight: 700; }
-button.dish-detail.dish-main { font-weight: 700; }
+/* Hauptgericht: fett und etwas größer, damit es klar auffällt (auch als Button, daher die zusätzliche Regel) */
+.dish-main { font-weight: 700; font-size: 1.16em; }
+button.dish-detail.dish-main { font-weight: 700; font-size: 1.16em; }
 
 /* Hauptgericht mit Foto/Beschreibung: zusätzlich klickbar */
 button.dish-detail {
@@ -360,11 +342,14 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
   margin-top: 0.3rem;
 }
 
+/* Allergen-Kästchen: am PC per Hover, am Handy per Antippen klappt der Name rechts auf (siehe app.js) */
 .al {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 1.5rem;
+  max-width: 1.6rem;
   height: 1.5rem;
   padding: 0 0.3rem;
   border-radius: 4px;
@@ -373,6 +358,33 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
   font-size: 0.78rem;
   font-weight: 700;
   line-height: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.25s ease;
+}
+
+.al-name {
+  display: inline-block;
+  opacity: 0;
+  margin-left: 0;
+  font-weight: 600;
+  transition: opacity 0.15s ease, margin-left 0.2s ease;
+}
+
+.al.is-open {
+  max-width: 14rem;
+  justify-content: flex-start;
+  padding-left: 0.4rem;
+}
+.al.is-open .al-name { opacity: 1; margin-left: 0.35rem; }
+
+@media (hover: hover) and (pointer: fine) {
+  .al:hover {
+    max-width: 14rem;
+    justify-content: flex-start;
+    padding-left: 0.4rem;
+  }
+  .al:hover .al-name { opacity: 1; margin-left: 0.35rem; }
 }
 
 .al:not([style]) { box-shadow: inset 0 0 0 1px var(--chip-line); }   /* Allergene ohne eigene Farbe */
@@ -410,7 +422,10 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
   font-size: 0.95rem;
 }
 
-/* ---------- Schmale Bildschirme: Wochenwahl über die volle Breite, Trennlinie zwischen den Mahlzeiten ---------- */
+/* Die Legende zeigt den Namen schon als eigenen Text; kein Aufklapp-Verhalten nötig */
+.legend .al { max-width: 1.6rem; }
+
+/* ---------- Schmale Bildschirme: Wochenwahl über die volle Breite ---------- */
 @media (max-width: 859px) {
   .week-nav { width: 100%; }
   .select-wrap { order: -1; flex: 1 0 100%; }
@@ -418,9 +433,53 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
   .week-nav button { flex: 1; }
 }
 
-@media (max-width: 640px) {
-  .meal-lunch { border-right: 1px solid var(--divider); padding-right: 0.6rem; }
-  .meal-dinner { padding-left: 0.6rem; }
+/* ---------- Breite Bildschirme: Tabelle Tag x Mahlzeit, mit fester Leiste oben ---------- */
+@media (min-width: 860px) {
+  .grid-head,
+  .day {
+    display: grid;
+    grid-template-columns: var(--cols);
+    column-gap: var(--col-gap);
+  }
+
+  .grid-head {
+    display: grid;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--surface);
+    padding: 0.9rem var(--pad-x) 0.5rem;
+    font-weight: 700;
+    color: var(--strong);
+    border-bottom: 2px solid var(--strong);
+  }
+
+  .day-head {
+    display: block;
+    margin: 0;
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;   /* nicht auf die volle Zeilenhöhe strecken (sonst viel Leerraum in der Box) */
+  }
+  .day-title { margin-bottom: 0.5rem; }
+
+  .meal { margin-top: 0; grid-row: 1; }
+  .meal-lunch { grid-column: 2; }
+  .meal-dinner { grid-column: 3; }
+  .meal + .meal { margin-top: 0; }
+
+  /* Am PC steht die Überschrift oben in der Leiste; diese hier ist dann nur für Screenreader */
+  .meal-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }
 
 /* ---------- Foto-Vorschau beim Überfahren mit der Maus (nur PC) ---------- */
@@ -516,18 +575,53 @@ body.detail-open { overflow: hidden; }
   object-fit: cover;
   border-radius: 10px;
   background: var(--chip-bg);
+  cursor: zoom-in;
 }
 
 .detail-description { margin: 0 0 0.75rem; line-height: 1.55; }
 .detail-allergens:not([hidden]) { margin-bottom: 0.75rem; }
 .detail-allergens .allergens { margin-top: 0.25rem; }
 
+/* ---------- Bild groß: Bild antippen/anklicken füllt die Bildschirmmitte ---------- */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: zoom-out;
+}
+.lightbox-overlay.is-visible { opacity: 1; }
+.lightbox-overlay:focus-visible { outline: none; }
+
+.lightbox-img {
+  display: block;
+  max-width: 92vw;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
+  transform: scale(0.96);
+  transition: transform 0.2s ease;
+}
+.lightbox-overlay.is-visible .lightbox-img { transform: scale(1); }
+
 /* ---------- Bewegung reduzieren: Anwender-Einstellung respektieren ---------- */
 @media (prefers-reduced-motion: reduce) {
   .panel,
   .detail-overlay,
   .detail-dialog,
-  .hover-preview {
+  .lightbox-overlay,
+  .lightbox-img,
+  .hover-preview,
+  .al {
     transition-duration: 0.01ms !important;
   }
 }
@@ -536,7 +630,7 @@ body.detail-open { overflow: hidden; }
 @media print {
   body { background: #fff; color: #000; }
   .masthead { background: none; color: #000; border-bottom: 2px solid #000; padding-bottom: 0.75rem; }
-  .week-nav, .skip, .notice, .detail-overlay, .hover-preview { display: none; }
+  .week-nav, .skip, .notice, .detail-overlay, .lightbox-overlay, .hover-preview { display: none; }
   .panel { border-top-color: #000; }
   .day { break-inside: avoid; }
   .day.is-today { background: none; }
