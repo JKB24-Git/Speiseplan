@@ -472,6 +472,13 @@
     dialog.setAttribute("aria-modal", "true");
     dialog.setAttribute("aria-labelledby", "detail-title");
     dialog.tabIndex = -1;
+    dialog.addEventListener("click", function (e) {
+      var target = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+      if (canHover() || !target || !target.closest(".detail-title, .detail-description")) return;
+      var selection = window.getSelection ? window.getSelection() : null;
+      if (selection && !selection.isCollapsed && selection.toString().trim()) return;
+      closeDetail();
+    });
 
     var closeBtn = el("button", "detail-close", "✕");
     closeBtn.type = "button";
@@ -496,12 +503,6 @@
 
     var body = el("div", "detail-body");
     var desc = el("p", "detail-description");
-    desc.addEventListener("click", function () {
-      if (canHover()) return;
-      var selection = window.getSelection ? window.getSelection() : null;
-      if (selection && !selection.isCollapsed && selection.toString().trim()) return;
-      closeDetail();
-    });
     var link = el("a", "detail-link", "↗");
     link.target = "_blank";
     link.rel = "noopener noreferrer";

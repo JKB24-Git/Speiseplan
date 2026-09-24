@@ -333,8 +333,6 @@ button.dish-detail {
   text-align: left;
   cursor: pointer;
 }
-button.dish-detail:hover,
-button.dish-detail:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
 button.dish-detail:hover { color: var(--muted); }
 
 .allergens {
@@ -501,7 +499,7 @@ button.dish-detail:hover { color: var(--muted); }
     align-items: center;
     justify-content: flex-start;
     gap: 0.45rem;
-    font-size: 0.9rem;
+    font-size: 1rem;
     line-height: 1.2;
     text-align: left;
   }
@@ -649,7 +647,7 @@ body.detail-open { overflow: hidden; }
 .detail-title { margin: 0 2.3rem 0.85rem 0; font-size: 1.55rem; font-weight: 800; }
 
 /* Bild schwebt an der Seite, der Text läuft links daneben (funktioniert auf PC und Handy gleich) */
-.detail-content { display: flow-root; }
+.detail-content { display: flow-root; padding-bottom: 1.25rem; }
 .detail-body { display: flow-root; }
 .detail-media { float: right; width: 44%; max-width: 23rem; margin: 0 0 0.85rem 1.25rem; }
 .detail-media img {
@@ -664,9 +662,11 @@ body.detail-open { overflow: hidden; }
 
 .detail-description { margin: 0 0 0.75rem; line-height: 1.6; }
 .detail-link {
-  float: left;
-  max-width: 70%;
-  margin: 0.4rem 1rem 0.25rem 0;
+  position: absolute;
+  left: 1.5rem;
+  bottom: 0.65rem;
+  max-width: calc(100% - 3rem);
+  margin: 0;
   color: var(--detail-link-color);
   font-size: 0.8rem;
   font-weight: 500;
@@ -680,6 +680,7 @@ body.detail-open { overflow: hidden; }
 
 @media (max-width: 859px) {
   .detail-dialog { max-height: calc(100vh - 1.25rem); padding: 1.1rem 1.1rem 1.3rem; }
+  .detail-link { left: 1.1rem; bottom: 0.45rem; max-width: calc(100% - 2.2rem); }
   .detail-title { font-size: 1.25rem; margin-right: 2.1rem; }
   .detail-media { float: none; width: 100%; max-width: none; margin: 0 0 1rem; }
   .detail-media img { aspect-ratio: 3 / 2; max-height: 46vh; object-fit: cover; }
