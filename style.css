@@ -16,8 +16,6 @@
   --today-block-ink: #ffffff;
   --today-tag-bg: #ffffff;
   --today-tag-ink: #111111;
-  --next-bg: #edf2f4;
-  --next-accent: #536a78;
   --day-divider: #777777;
   --detail-link-color: #555555;
   --chip-bg: #e6e6e6;       /* Allergene ohne eigene Farbe */
@@ -35,7 +33,7 @@
   --notice-ink: #111111;
 
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --serif: var(--sans);
   --cols: 10.5rem minmax(0, 1fr) minmax(0, 1fr);
   --col-gap: 2rem;
   --pad-x: 1.25rem;
@@ -57,8 +55,6 @@
     --today-block-ink: #ffffff;
     --today-tag-bg: #1a1a1a;
     --today-tag-ink: #ffffff;
-    --next-bg: #242a2e;
-    --next-accent: #a5bbc6;
     --day-divider: #777777;
     --detail-link-color: #bdbdbd;
     --chip-bg: #2c2c2c;
@@ -280,12 +276,10 @@ body {
 
 /* Zeitlich nächste veröffentlichte Mahlzeit */
 .meal.is-next {
-  background: var(--next-bg);
-  border: 0;
-  border-radius: 8px;
-  padding: 0.75rem;
+  outline: 1px solid var(--divider);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
-.meal.is-next .meal-label { color: var(--next-accent); border-bottom-color: var(--next-accent); }
 
 .meal-label {
   margin: 0 0 0.5rem;
