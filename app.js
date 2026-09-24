@@ -25,8 +25,7 @@
     detailClose: "Schließen",
     zoomHint: "Bild vergrößern",
     zoomClose: "Bild verkleinern",
-    linkHint: "Externe Seite öffnen",
-    nextMeal: "Als Nächstes"
+    linkHint: "Externe Seite öffnen"
   };
 
   var MEALS = [
@@ -626,7 +625,6 @@
     label.appendChild(document.createTextNode(meal.label + " "));
     label.appendChild(el("span", "meal-time", formatRange(MEAL_TIMES[meal.key])));
     cell.appendChild(label);
-    if (isNext) cell.appendChild(el("span", "next-tag", TEXT.nextMeal));
 
     var list = el("ul", "dishes");
     items.forEach(function (item, idx) {
