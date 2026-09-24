@@ -282,7 +282,7 @@ body {
 
 .meal + .meal { margin-top: 1.5rem; }
 
-/* Als Nächstes dran (nur beim heutigen Tag, nach den Essenszeiten in app.js) */
+/* Zeitlich nächste veröffentlichte Mahlzeit */
 .meal.is-next {
   background: var(--next-bg);
   border: 2px solid var(--next-accent);
@@ -493,6 +493,11 @@ button.dish-detail:focus-visible { text-decoration-color: currentColor; }
 
 /* ---------- Schmale Bildschirme: Wochenwahl über die volle Breite ---------- */
 @media (max-width: 859px) {
+  .allergens {
+    display: grid;
+    grid-template-columns: repeat(7, 1.6rem);
+    gap: 0.25rem;
+  }
   .day.is-today .day-head { align-items: center; }
   .day.is-today .today-tag {
     display: flex;

@@ -48,13 +48,27 @@
 
   function formatRange(t) { return t.start + "–" + t.end; }
 
-  // Welche Mahlzeit ist heute als Nächstes dran (nach den Zeiten oben)? null = beide vorbei.
-  function nextMealKey() {
-    var now = new Date();
-    var mins = now.getHours() * 60 + now.getMinutes();
-    if (mins < parseHM(MEAL_TIMES.lunch.end)) return "lunch";
-    if (mins < parseHM(MEAL_TIMES.dinner.end)) return "dinner";
-    return null;
+  // Nächste veröffentlichte Mahlzeit anhand Datum und Essenszeiten finden.
+  function nextMealTarget(days, monday, now) {
+    var candidates = [];
+    (Array.isArray(days) ? days : []).forEach(function (day) {
+      if (!day || typeof day !== "object") return;
+      var dayIndex = DAY_NAMES.indexOf(String(day.day || "").trim().toLowerCase());
+      if (dayIndex < 0) return;
+      var date = addDays(monday, dayIndex);
+      MEALS.forEach(function (meal) {
+        var items = day[meal.key];
+        if (!Array.isArray(items) || !items.length) return;
+        var startAt = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        startAt.setMinutes(parseHM(MEAL_TIMES[meal.key].start), 0, 0);
+        var endAt = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        endAt.setMinutes(parseHM(MEAL_TIMES[meal.key].end), 0, 0);
+        if (endAt <= startAt) endAt.setDate(endAt.getDate() + 1);
+        if (endAt > now) candidates.push({ dayIndex: dayIndex, key: meal.key, startsAt: startAt });
+      });
+    });
+    candidates.sort(function (a, b) { return a.startsAt - b.startsAt; });
+    return candidates.length ? candidates[0] : null;
   }
 
   var DAY_NAMES = ["montag", "dienstag", "mittwoch", "donnerstag", "freitag", "samstag", "sonntag"];
@@ -501,12 +515,7 @@
     overlay.appendChild(dialog);
     document.body.appendChild(overlay);
 
-    dialog.addEventListener("click", function (e) {
-      if (canHover() || (e.target.closest && (e.target.closest("img") || e.target.closest(".al-foldable")))) return;
-      var selection = window.getSelection && window.getSelection();
-      if (selection && String(selection).trim()) return;
-      closeDetail();
-    });
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) closeDetail(); });
 
     detail = { overlay: overlay, dialog: dialog, closeBtn: closeBtn, title: title, media: media, img: img, desc: desc, link: link, allergenWrap: allergenWrap, closeTimer: null };
     return detail;
@@ -634,7 +643,7 @@
     return cell;
   }
 
-  function renderDay(day, monday, today) {
+  function renderDay(day, monday, today, nextMeal) {
     var name = String(day.day || "").trim();
     var idx = DAY_NAMES.indexOf(name.toLowerCase());
     var date = idx >= 0 ? addDays(monday, idx) : null;
@@ -651,7 +660,7 @@
     if (isToday) head.appendChild(el("span", "today-tag", TEXT.today));
     section.appendChild(head);
 
-    var next = isToday ? nextMealKey() : null;
+    var next = nextMeal && nextMeal.dayIndex === idx ? nextMeal.key : null;
     MEALS.forEach(function (meal) {
       var cell = renderMeal(day, meal, meal.key === next);
       if (cell) section.appendChild(cell);
@@ -676,8 +685,9 @@
       showMessage(TEXT.noEntries);
       return;
     }
+    var nextMeal = nextMealTarget(days, monday, today);
     days.forEach(function (day) {
-      if (day && typeof day === "object") ui.plan.appendChild(renderDay(day, monday, today));
+      if (day && typeof day === "object") ui.plan.appendChild(renderDay(day, monday, today, nextMeal));
     });
   }
 
