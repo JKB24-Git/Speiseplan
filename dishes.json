@@ -5,12 +5,19 @@
       "link": "https://de.wikipedia.org/wiki/Wiener_Schnitzel"
     },
     "Römische Griesnocken Tomatensauce": {
-      "description": "Römische Grießnocken mit Tomatensauce (Gnocchi alla romana) sind ein Spezialitätengericht der italienischen Küche: Aus in Milch gekochtem Hartweizengrieß, Butter, Eigelb und Käse wird eine feste Masse geformt, in Taler geschnitten und anschließend zusammen mit Tomatensauce und Käse im Ofen gebacken. Je nach Zubereitung werden die Nocken direkt auf der Sauce eingebettet oder getrennt davon als Beilage serviert."
+      "description": "Römische Grießnocken mit Tomatensauce (Gnocchi alla romana) sind ein Spezialitätengericht der italienischen Küche: Aus in Milch gekochtem Hartweizengrieß, Butter, Eigelb und Käse wird eine feste Masse geformt, in Taler geschnitten und anschließend zusammen mit Tomatensauce und Käse im Ofen gebacken. Je nach Zubereitung werden die Nocken direkt auf der Sauce eingebettet oder getrennt davon als Beilage serviert.",
+      "link": "https://de.wikipedia.org/wiki/Gnocchi_alla_romana"
     },
     "Käseknödel mit Butter und Parmesan": {
-      "description": "Käseknödel mit Butter und Parmesan sind ein traditionelles Knödelgericht aus der alpinen Küche (insbesondere Südtirol und Österreich). Aus Semmelwürfeln, Milch, Eiern und geriebenem Käse geformte Knödel werden in Salzwasser gekocht und anschließend mit geschmolzener Butter sowie geriebenem Parmesan serviert. Je nach regionalem Rezept kommen unterschiedliche Schnittkäsesorten zum Einsatz, und die Butter wird teils bräunlich aufgeschäumt oder mit Salbei verfeinert."
+      "description": "Käseknödel mit Butter und Parmesan sind ein traditionelles Knödelgericht aus der alpinen Küche (insbesondere Südtirol und Österreich). Aus Semmelwürfeln, Milch, Eiern und geriebenem Käse geformte Knödel werden in Salzwasser gekocht und anschließend mit geschmolzener Butter sowie geriebenem Parmesan serviert. Je nach regionalem Rezept kommen unterschiedliche Schnittkäsesorten zum Einsatz, und die Butter wird teils bräunlich aufgeschäumt oder mit Salbei verfeinert.",
+      "link": "https://de.wikipedia.org/wiki/Käseknödel"
     },
     "Nudel mit Carbonara-Sauce": {
-      "description": "Nudeln mit Carbonara-Sauce sind ein Pasta-Klassiker der italienischen Küche: Gekochte Nudeln werden mit einer Sauce aus Eigelben, geriebenem Hartkäse, gebratenem Speck und Pfeffer vermengt, die durch die Restwärme der Pasta sämig bindet. Je nach Zubereitungsart variiert die Rezeptur in der Praxis durch die Wahl der Nudelsorte, des Specks (Guanciale oder Pancetta), des Käses (Pecorino oder Parmesan) oder der gelegentlichen Zugabe von Sahne."
+      "description": "Nudeln mit Carbonara-Sauce sind ein Pasta-Klassiker der italienischen Küche: Gekochte Nudeln werden mit einer Sauce aus Eigelben, geriebenem Hartkäse, gebratenem Speck und Pfeffer vermengt, die durch die Restwärme der Pasta sämig bindet. Je nach Zubereitungsart variiert die Rezeptur in der Praxis durch die Wahl der Nudelsorte, des Specks (Guanciale oder Pancetta), des Käses (Pecorino oder Parmesan) oder der gelegentlichen Zugabe von Sahne.",
+      "link": "https://de.wikipedia.org/wiki/Carbonara"
+    },
+    "Barschfilet mit Bratkartoffel und Spinat": {
+      "description": "Barschfilet mit Bratkartoffeln und Spinat ist ein Fischgericht der mitteleuropäischen Küche: Ein in der Pfanne gebratenes Barschfilet wird zusammen mit knusprig gebratenen Kartoffelscheiben und blanchiertem oder leicht gebundenem Spinat serviert. Je nach Zubereitung wird der Fisch naturbelassen oder mehlgestaubt gebraten, während der Spinat wahlweise als Blattspinat oder als Rahmspinat zubereitet wird.",
+      "link": "https://www.giallozafferano.de/rezepte/barschfilet"
     }
   }
