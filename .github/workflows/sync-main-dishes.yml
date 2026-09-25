@@ -1,0 +1,39 @@
+name: Add missing main dishes
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "weeks/*.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-dishes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Add missing main dishes
+        run: node scripts/sync-main-dishes.mjs
+
+      - name: Commit generated dish entries
+        run: |
+          if git diff --quiet -- dishes.json; then
+            echo "No new main dishes to add."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dishes.json
+          git commit -m "Add new main dishes to dishes.json"
+          git push
