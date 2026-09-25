@@ -1,27 +1,133 @@
-  {
-    "Wiener Schnitzel mit Kartoffelsalat": {
-      "description": "Das Wiener Schnitzel mit Kartoffelsalat ist ein Gericht der österreichischen Küche, das aus einem panierten, in Fett ausgebackenen Schnitzel und einer Beilage aus mariniertem Kartoffelsalat besteht. Je nach Küche variieren die Details der Zubereitung: Das Schnitzel wird wahlweise in Schmalz, Butter oder Pflanzenöl gebraten, während der Kartoffelsalat je nach Rezeptur mit warmer Brühe, Essig, Öl, Zwiebeln oder Senf angemacht wird.",
-      "image": "images/wiener-schnitzel-kartoffelsalat-rezept.png",
-      "link": "https://de.wikipedia.org/wiki/Wiener_Schnitzel"
-    },
-    "Römische Griesnocken Tomatensauce": {
-      "description": "Römische Grießnocken mit Tomatensauce (Gnocchi alla romana) sind ein Spezialitätengericht der italienischen Küche: Aus in Milch gekochtem Hartweizengrieß, Butter, Eigelb und Käse wird eine feste Masse geformt, in Taler geschnitten und anschließend zusammen mit Tomatensauce und Käse im Ofen gebacken. Je nach Zubereitung werden die Nocken direkt auf der Sauce eingebettet oder getrennt davon als Beilage serviert.",
-      "link": "https://de.wikipedia.org/wiki/Gnocchi_alla_romana"
-    },
-    "Käseknödel mit Butter und Parmesan": {
-      "description": "Käseknödel mit Butter und Parmesan sind ein traditionelles Knödelgericht aus der alpinen Küche (insbesondere Südtirol und Österreich). Aus Semmelwürfeln, Milch, Eiern und geriebenem Käse geformte Knödel werden in Salzwasser gekocht und anschließend mit geschmolzener Butter sowie geriebenem Parmesan serviert. Je nach regionalem Rezept kommen unterschiedliche Schnittkäsesorten zum Einsatz, und die Butter wird teils bräunlich aufgeschäumt oder mit Salbei verfeinert.",
-      "link": "https://de.wikipedia.org/wiki/Käseknödel"
-    },
-    "Nudel mit Carbonara-Sauce": {
-      "description": "Nudeln mit Carbonara-Sauce sind ein Pasta-Klassiker der italienischen Küche: Gekochte Nudeln werden mit einer Sauce aus Eigelben, geriebenem Hartkäse, gebratenem Speck und Pfeffer vermengt, die durch die Restwärme der Pasta sämig bindet. Je nach Zubereitungsart variiert die Rezeptur in der Praxis durch die Wahl der Nudelsorte, des Specks (Guanciale oder Pancetta), des Käses (Pecorino oder Parmesan) oder der gelegentlichen Zugabe von Sahne.",
-      "link": "https://de.wikipedia.org/wiki/Carbonara"
-    },
-    "Barschfilet mit Bratkartoffel und Spinat": {
-      "description": "Barschfilet mit Bratkartoffeln und Spinat ist ein Fischgericht der mitteleuropäischen Küche: Ein in der Pfanne gebratenes Barschfilet wird zusammen mit knusprig gebratenen Kartoffelscheiben und blanchiertem oder leicht gebundenem Spinat serviert. Je nach Zubereitung wird der Fisch naturbelassen oder mehlgestaubt gebraten, während der Spinat wahlweise als Blattspinat oder als Rahmspinat zubereitet wird.",
-      "link": "https://www.giallozafferano.de/rezepte/barschfilet"
-    },
-    "": {
-      "description": "Meraner Hauswurst mit Pommes frites und Mischgemüse ist ein herzhaftes Fleischgericht der südtiroler-alpinen Küche: Eine würzige, leicht geräucherte Hauswurst wird gebraten oder gegrillt und zusammen mit Pommes sowie einer gedünsteten Gemüsemischung serviert. Je nach Zubereitung wird die Wurst natur oder leicht eingeschnitten gebraten, während die Gemüsebeilage meist aus einer Kombination wie Erbsen, Karotten, Bohnen oder Blumenkohl besteht.",
-      "link": "https://suedtirolgustos.de/blog/rezepte/meraner-wuerstel"
-    }
+{
+  "Wiener Schnitzel mit Kartoffelsalat": {
+    "description": "Das Wiener Schnitzel mit Kartoffelsalat ist ein Gericht der österreichischen Küche, das aus einem panierten, in Fett ausgebackenen Schnitzel und einer Beilage aus mariniertem Kartoffelsalat besteht. Je nach Küche variieren die Details der Zubereitung: Das Schnitzel wird wahlweise in Schmalz, Butter oder Pflanzenöl gebraten, während der Kartoffelsalat je nach Rezeptur mit warmer Brühe, Essig, Öl, Zwiebeln oder Senf angemacht wird.",
+    "image": "images/wiener-schnitzel-kartoffelsalat-rezept.png",
+    "link": "https://de.wikipedia.org/wiki/Wiener_Schnitzel"
+  },
+  "Römische Griesnocken Tomatensauce": {
+    "description": "Römische Grießnocken mit Tomatensauce (Gnocchi alla romana) sind ein Spezialitätengericht der italienischen Küche: Aus in Milch gekochtem Hartweizengrieß, Butter, Eigelb und Käse wird eine feste Masse geformt, in Taler geschnitten und anschließend zusammen mit Tomatensauce und Käse im Ofen gebacken. Je nach Zubereitung werden die Nocken direkt auf der Sauce eingebettet oder getrennt davon als Beilage serviert.",
+    "link": "https://de.wikipedia.org/wiki/Gnocchi_alla_romana"
+  },
+  "Käseknödel mit Butter und Parmesan": {
+    "description": "Käseknödel mit Butter und Parmesan sind ein traditionelles Knödelgericht aus der alpinen Küche (insbesondere Südtirol und Österreich). Aus Semmelwürfeln, Milch, Eiern und geriebenem Käse geformte Knödel werden in Salzwasser gekocht und anschließend mit geschmolzener Butter sowie geriebenem Parmesan serviert. Je nach regionalem Rezept kommen unterschiedliche Schnittkäsesorten zum Einsatz, und die Butter wird teils bräunlich aufgeschäumt oder mit Salbei verfeinert.",
+    "link": "https://de.wikipedia.org/wiki/Käseknödel"
+  },
+  "Nudel mit Carbonara-Sauce": {
+    "description": "Nudeln mit Carbonara-Sauce sind ein Pasta-Klassiker der italienischen Küche: Gekochte Nudeln werden mit einer Sauce aus Eigelben, geriebenem Hartkäse, gebratenem Speck und Pfeffer vermengt, die durch die Restwärme der Pasta sämig bindet. Je nach Zubereitungsart variiert die Rezeptur in der Praxis durch die Wahl der Nudelsorte, des Specks (Guanciale oder Pancetta), des Käses (Pecorino oder Parmesan) oder der gelegentlichen Zugabe von Sahne.",
+    "link": "https://de.wikipedia.org/wiki/Carbonara"
+  },
+  "Barschfilet mit Bratkartoffel und Spinat": {
+    "description": "Barschfilet mit Bratkartoffeln und Spinat ist ein Fischgericht der mitteleuropäischen Küche: Ein in der Pfanne gebratenes Barschfilet wird zusammen mit knusprig gebratenen Kartoffelscheiben und blanchiertem oder leicht gebundenem Spinat serviert. Je nach Zubereitung wird der Fisch naturbelassen oder mehlgestaubt gebraten, während der Spinat wahlweise als Blattspinat oder als Rahmspinat zubereitet wird.",
+    "link": "https://www.giallozafferano.de/rezepte/barschfilet"
+  },
+  "Meraner Hauswurst mit Pommes frittes und Mischgemüse": {
+    "description": "Meraner Hauswurst mit Pommes frites und Mischgemüse ist ein herzhaftes Fleischgericht der südtiroler-alpinen Küche: Eine würzige, leicht geräucherte Hauswurst wird gebraten oder gegrillt und zusammen mit Pommes sowie einer gedünsteten Gemüsemischung serviert. Je nach Zubereitung wird die Wurst natur oder leicht eingeschnitten gebraten, während die Gemüsebeilage meist aus einer Kombination wie Erbsen, Karotten, Bohnen oder Blumenkohl besteht.",
+    "link": "https://suedtirolgustos.de/blog/rezepte/meraner-wuerstel"
+  },
+  "Vollkornnudel mit Schinken und Erbsen": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Kalbsrahmgoulash mit Reis und Karotten": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Spinatknödel mit Parmesan und Butter": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Kartoffelnocken mit Safransauce und Räucherlachs": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Truthahnschnitzel vom Grill mit Tex-Mexkartoffel und Mischgemüse": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Tortellini Mamma Rosa Art": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Heilbuttfilet mit Salzkartoffel und Zucchini": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Farfalle mit Amatriciana Sauce": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Eier-Spätzle mit Pfifferlingsauce": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Schlutzkrapfen mit Parmesan und Olivenöl": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Truthahn-Currygeschnetzeltes, Basmatireis, Bohnen": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Hühnerkeulen mit Wedgeskartoffeln und Peperonata": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Penne mit frischen Tomaten, Mozzarella und Pesto": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Lasagne Bolognese": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Gnocchetti sardi mit Garnelen-Gemüsesauce": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Gebackenes Schollenfilet mit Salzkartoffel und Brokoli": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Hirtenmaccheroni": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Pilzknödel mit Ratatouillegemüse": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Rindsgulash mit Reis und Karotten-Erbsengemüse": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Fusilli mit Thunfischsauce": {
+    "description": "",
+    "image": "",
+    "link": ""
+  },
+  "Ravioli mit Spinat- Topfenfüllung an Tomatensauce": {
+    "description": "",
+    "image": "",
+    "link": ""
   }
+}
+
