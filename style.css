@@ -319,6 +319,14 @@ body {
 .dish-main { font-weight: 700; font-size: 1.16em; }
 button.dish-detail.dish-main { font-weight: 700; font-size: 1.16em; }
 
+/* Dotted underline only marks main dishes that open a description. */
+button.dish-detail.dish-main {
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--muted);
+  text-underline-offset: 3px;
+}
+
 /* Hauptgericht mit Foto/Beschreibung: zusätzlich klickbar */
 button.dish-detail {
   display: inline;
